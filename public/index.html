@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#FF6B9D">
+<title>Eikō Prep — International School Readiness</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --pk:#FF6B9D;--g1:#7C6CF6;--g2:#26A69A;
+  --wr:#FF6B9D;--ph:#FF9F43;--sp:#00BCD4;--sk:#26A69A;--ma:#7C6CF6;
+  --bg:#FFF9F0;--card:#fff;--txt:#2D3436;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden;max-width:480px;margin:0 auto}
+
+/* SCREENS */
+.screen{display:none;min-height:100vh;padding:16px;flex-direction:column}
+.screen.active{display:flex}
+
+/* SPLASH */
+#splash{align-items:center;justify-content:center;background:linear-gradient(160deg,#fff5fb,#f0f4ff);gap:16px;text-align:center}
+.splash-logo{font-size:4rem}
+.splash-title{font-size:1.8rem;font-weight:900;color:var(--g1)}
+.splash-sub{font-size:.95rem;color:#888;line-height:1.6;max-width:300px}
+.level-row{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;margin-top:8px}
+.lbtn{padding:16px;border-radius:16px;border:none;font-family:inherit;font-size:1rem;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:12px;transition:transform .1s}
+.lbtn:active{transform:scale(.96)}
+.lbtn.pk{background:#fff0f6;color:var(--pk);border:2.5px solid var(--pk)}
+.lbtn.g1{background:#f3f0ff;color:var(--g1);border:2.5px solid var(--g1)}
+.lbtn.g2{background:#e8f7f5;color:var(--g2);border:2.5px solid var(--g2)}
+.lbtn-ico{font-size:1.6rem}
+.lbtn-info{text-align:left}
+.lbtn-name{font-size:1rem;font-weight:900}
+.lbtn-age{font-size:.78rem;font-weight:400;opacity:.7}
+
+/* HOME */
+#home{background:linear-gradient(160deg,#fff5fb,#fff9f0)}
+.home-head{text-align:center;padding:16px 0 12px}
+.home-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.78rem;font-weight:700;margin-bottom:8px}
+.pk .home-badge{background:#fff0f6;color:var(--pk)}
+.g1 .home-badge{background:#f3f0ff;color:var(--g1)}
+.g2 .home-badge{background:#e8f7f5;color:var(--g2)}
+.home-title{font-size:1.7rem;font-weight:900}
+.home-stars{font-size:1.2rem;margin:6px 0;min-height:28px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.card{background:white;border-radius:20px;padding:20px 10px 14px;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.07);border:3px solid transparent;transition:transform .12s;user-select:none}
+.card:active{transform:scale(.93)}
+.card.wr{border-color:var(--wr)}.card.ph{border-color:var(--ph)}.card.sp{border-color:var(--sp)}.card.sk{border-color:var(--sk)}.card.ma{border-color:var(--ma);grid-column:span 2}
+.card-ico{font-size:2.6rem;display:block}
+.card-name{font-size:.98rem;font-weight:900;margin-top:7px}
+.card.wr .card-name{color:var(--wr)}.card.ph .card-name{color:var(--ph)}.card.sp .card-name{color:var(--sp)}.card.sk .card-name{color:var(--sk)}.card.ma .card-name{color:var(--ma)}
+.card-sub{font-size:.74rem;color:#bbb;margin-top:2px}
+.change-btn{margin-top:14px;background:none;border:1.5px solid #ddd;border-radius:12px;padding:8px 16px;font-family:inherit;font-size:.82rem;color:#aaa;cursor:pointer;align-self:center}
+.parent-btn{margin-top:10px;background:none;border:1.5px solid #ddd;border-radius:12px;padding:10px 16px;font-family:inherit;font-size:.85rem;color:#888;cursor:pointer;align-self:center}
+
+/* SECTION SCREENS */
+.back-btn{background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px 8px;margin-bottom:8px;align-self:flex-start;color:#aaa}
+.sec-title{font-size:1.2rem;font-weight:900;margin-bottom:12px}
+.pbar-wrap{background:#eee;border-radius:8px;height:8px;margin-bottom:16px;overflow:hidden}
+.pfill{height:8px;border-radius:8px;transition:width .4s}
+
+/* WRITING */
+.lnav{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.lb{width:38px;height:38px;border:2px solid #eee;border-radius:10px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;background:#fff;color:#aaa;transition:.1s}
+.lb.done{background:#fff5fb;border-color:var(--wr);color:var(--wr)}
+.lb.cur{background:var(--wr);border-color:var(--wr);color:#fff}
+.canvas-wrap{position:relative;width:100%;aspect-ratio:1;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.guide-char{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:min(180px,50vw);font-weight:900;color:rgba(255,107,157,.1);pointer-events:none;user-select:none;font-family:'Nunito',sans-serif}
+#trace-canvas{position:absolute;inset:0;width:100%!important;height:100%!important;border:3px dashed var(--wr);border-radius:20px;touch-action:none;cursor:crosshair}
+.stroke-hint{font-size:.88rem;color:#aaa;text-align:center;margin-top:8px;min-height:22px}
+.btn-row{display:flex;gap:10px;margin-top:12px}
+.btn{flex:1;padding:13px;border:none;border-radius:14px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .1s}
+.btn:active{transform:scale(.96)}
+.btn-ghost{background:#f5f5f5;color:#aaa}
+.btn-wr{background:var(--wr);color:#fff}
+.btn-ph{background:var(--ph);color:#fff}
+.btn-sp{background:var(--sp);color:#fff}
+.btn-sk{background:var(--sk);color:#fff}
+.btn-ma{background:var(--ma);color:#fff}
+
+/* PHONICS */
+.word-display{font-size:2.8rem;font-weight:900;text-align:center;padding:18px;background:#fff;border-radius:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.ph-img{font-size:4rem;display:block;text-align:center;margin-bottom:4px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.choice{padding:14px;border:2.5px solid #eee;border-radius:14px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;background:#fff;transition:.12s;text-align:center}
+.choice:active{transform:scale(.96)}
+.choice.ok{background:#e8fdf2;border-color:#2ecc71;color:#27ae60}
+.choice.no{background:#fde8e8;border-color:#e74c3c;color:#c0392b}
+.ph-score{text-align:center;color:#aaa;font-size:.88rem;margin-top:8px}
+.hear-btn{width:100%;padding:14px;border:2.5px solid var(--ph);border-radius:14px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;background:#fff8f0;color:var(--ph);margin-bottom:10px}
+
+/* SPELLING */
+.spell-word{font-size:2rem;font-weight:900;text-align:center;padding:14px;background:#fff;border-radius:16px;margin-bottom:10px;letter-spacing:4px;min-height:70px;display:flex;align-items:center;justify-content:center}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.tile{width:48px;height:52px;border:2.5px solid var(--sp);border-radius:12px;font-family:inherit;font-size:1.2rem;font-weight:900;cursor:pointer;background:#fff;color:var(--sp);display:flex;align-items:center;justify-content:center;transition:.1s;user-select:none}
+.tile:active{transform:scale(.88)}
+.tile.used{opacity:.22;pointer-events:none}
+.sp-hint{font-size:.85rem;color:#aaa;text-align:center;margin-top:6px}
+
+/* SPEAKING */
+.q-card{background:#fff;border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.q-num{font-size:.78rem;color:#bbb;margin-bottom:6px}
+.q-txt{font-size:1.15rem;font-weight:700;line-height:1.5}
+.eg-box{background:#f0fff8;border-radius:12px;padding:14px;margin-top:10px;font-size:.9rem;color:var(--sk);line-height:1.5;display:none}
+.eg-box.show{display:block}
+.sk-count{text-align:center;color:#aaa;font-size:.85rem;margin-top:8px}
+
+/* MATH */
+.eq-card{background:#fff;border-radius:20px;padding:24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:16px}
+.eq{font-size:2.6rem;font-weight:900;color:var(--ma)}
+.eq-sub{font-size:.9rem;color:#aaa;margin-top:6px}
+.answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ab{padding:18px;border:2.5px solid #eee;border-radius:14px;font-family:inherit;font-size:1.5rem;font-weight:900;cursor:pointer;background:#fff;color:#555;transition:.12s}
+.ab:active{transform:scale(.94)}
+.ab.ok{background:#e8fdf2;border-color:#2ecc71;color:#27ae60}
+.ab.no{background:#fde8e8;border-color:#e74c3c;color:#c0392b}
+.m-score{text-align:center;color:#aaa;font-size:.88rem;margin-top:8px}
+
+/* CELEBRATE */
+.cel{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.cel.show{display:flex}
+.cel-ico{font-size:5rem}
+.cel-txt{font-size:1.4rem;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+
+/* PARENT OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;padding:16px;overflow-y:auto}
+.overlay.show{display:block}
+.overlay-card{background:#fff;border-radius:24px;padding:20px;max-width:420px;margin:0 auto;position:relative}
+.modal-x{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#aaa}
+.modal-title{font-size:1.1rem;font-weight:900;margin-bottom:16px}
+.srow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f5f5f5;font-size:.9rem}
+.sval{font-weight:700;color:var(--g1)}
+.sit{display:flex;justify-content:space-between;padding:7px 0;font-size:.82rem;border-bottom:1px solid #fafafa;color:#666}
+</style>
+</head>
+<body>
+
+<!-- SPLASH / LEVEL SELECT -->
+<div id="splash" class="screen active">
+  <div class="splash-logo">🌟</div>
+  <div class="splash-title">Eikō Prep</div>
+  <div class="splash-sub">International school readiness practice for your child 🇯🇵🇬🇧<br>英語入試準備アプリ</div>
+  <div class="level-row">
+    <button class="lbtn pk" onclick="setLevel('pk')">
+      <span class="lbtn-ico">🐣</span>
+      <div class="lbtn-info">
+        <div class="lbtn-name">Pre-K</div>
+        <div class="lbtn-age">Age 4–5 · Letters & sounds</div>
+      </div>
+    </button>
+    <button class="lbtn g1" onclick="setLevel('g1')">
+      <span class="lbtn-ico">📚</span>
+      <div class="lbtn-info">
+        <div class="lbtn-name">Grade 1 Entry</div>
+        <div class="lbtn-age">Age 5–6 · Reading & writing</div>
+      </div>
+    </button>
+    <button class="lbtn g2" onclick="setLevel('g2')">
+      <span class="lbtn-ico">🚀</span>
+      <div class="lbtn-info">
+        <div class="lbtn-name">Grade 2 Entry</div>
+        <div class="lbtn-age">Age 6–7 · Sentences & maths</div>
+      </div>
+    </button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="home" class="screen">
+  <div class="home-head">
+    <div class="home-badge" id="level-badge">Grade 1</div>
+    <div class="home-title">Today's Practice ✨</div>
+    <div class="home-stars" id="today-stars">🌟 Ready to start!</div>
+  </div>
+  <div class="grid">
+    <div class="card wr" onclick="go('writing')">
+      <span class="card-ico">✏️</span>
+      <div class="card-name">Writing</div>
+      <div class="card-sub" id="sub-writing">a–z letters</div>
+    </div>
+    <div class="card ph" onclick="go('phonics')">
+      <span class="card-ico">📖</span>
+      <div class="card-name">Phonics</div>
+      <div class="card-sub" id="sub-phonics">Letter sounds</div>
+    </div>
+    <div class="card sp" onclick="go('spelling')">
+      <span class="card-ico">🔤</span>
+      <div class="card-name">Spelling</div>
+      <div class="card-sub" id="sub-spelling">Spell it out!</div>
+    </div>
+    <div class="card sk" onclick="go('speaking')">
+      <span class="card-ico">🗣️</span>
+      <div class="card-name">Speaking</div>
+      <div class="card-sub" id="sub-speaking">Full sentences</div>
+    </div>
+    <div class="card ma" onclick="go('math')">
+      <span class="card-ico">➕</span>
+      <div class="card-name">Math</div>
+      <div class="card-sub" id="sub-math">Numbers & sums</div>
+    </div>
+  </div>
+  <button class="change-btn" onclick="go('splash')">🔄 Change level</button>
+  <button class="parent-btn" onclick="openParent()">👨‍👩‍👧 Parent View / 保護者用</button>
+</div>
+
+<!-- WRITING -->
+<div id="writing" class="screen">
+  <button class="back-btn" onclick="goHome()">←</button>
+  <div class="sec-title">✏️ Writing Practice</div>
+  <div class="pbar-wrap"><div class="pfill" id="w-bar" style="background:var(--wr);width:0%"></div></div>
+  <div class="lnav" id="lnav"></div>
+  <div class="canvas-wrap">
+    <div class="guide-char" id="guide-ch">a</div>
+    <canvas id="trace-canvas"></canvas>
+  </div>
+  <div class="stroke-hint" id="s-hint"></div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="clearCanvas()">🗑️ Clear</button>
+    <button class="btn btn-wr" onclick="letterDone()">⭐ Done!</button>
+  </div>
+</div>
+
+<!-- PHONICS -->
+<div id="phonics" class="screen">
+  <button class="back-btn" onclick="goHome()">←</button>
+  <div class="sec-title">📖 Phonics</div>
+  <div class="pbar-wrap"><div class="pfill" id="ph-bar" style="background:var(--ph);width:0%"></div></div>
+  <div class="word-display">
+    <span class="ph-img" id="ph-img">🐱</span>
+    <span id="ph-word">cat</span>
+  </div>
+  <button class="hear-btn" onclick="hearPh()">🔊 Hear it!</button>
+  <div style="font-size:.9rem;color:#aaa;text-align:center;margin-bottom:8px">Which picture matches?</div>
+  <div class="choices" id="ph-choices"></div>
+  <div class="ph-score" id="ph-score"></div>
+</div>
+
+<!-- SPELLING -->
+<div id="spelling" class="screen">
+  <button class="back-btn" onclick="goHome()">←</button>
+  <div class="sec-title">🔤 Spelling</div>
+  <div class="pbar-wrap"><div class="pfill" id="sp-bar" style="background:var(--sp);width:0%"></div></div>
+  <div style="text-align:center;font-size:3rem;margin-bottom:4px" id="sp-img">🐶</div>
+  <div class="spell-word" id="spell-display">_ _ _</div>
+  <div class="sp-hint" id="sp-hint">Tap the letters in order!</div>
+  <button style="width:100%;padding:12px;border:2px solid var(--sp);border-radius:14px;font-family:inherit;font-size:.95rem;font-weight:700;background:#e8f9fc;color:var(--sp);cursor:pointer;margin-top:8px" onclick="hearSp()">🔊 Hear the word</button>
+  <div class="tiles" id="sp-tiles"></div>
+</div>
+
+<!-- SPEAKING -->
+<div id="speaking" class="screen">
+  <button class="back-btn" onclick="goHome()">←</button>
+  <div class="sec-title">🗣️ Speaking Practice</div>
+  <div class="pbar-wrap"><div class="pfill" id="sk-bar" style="background:var(--sk);width:0%"></div></div>
+  <div class="q-card">
+    <div class="q-num" id="q-num">Question 1 of 15</div>
+    <div class="q-txt" id="q-txt">What is your name?</div>
+    <div class="eg-box" id="eg-box">
+      <b>Example:</b> <span id="eg-txt"></span>
+    </div>
+  </div>
+  <div class="sk-count" id="sk-count">0 / 15 done</div>
+  <div class="btn-row">
+    <button class="btn btn-sk" onclick="hearQ()">🔊 Hear</button>
+    <button class="btn btn-ghost" onclick="toggleEg()">💡 Example</button>
+  </div>
+  <button class="btn btn-sk" style="margin-top:10px" onclick="skMarkDone()">⭐ I said a full sentence!</button>
+</div>
+
+<!-- MATH -->
+<div id="math" class="screen">
+  <button class="back-btn" onclick="goHome()">←</button>
+  <div class="sec-title">➕ Math Practice</div>
+  <div class="pbar-wrap"><div class="pfill" id="m-bar" style="background:var(--ma);width:0%"></div></div>
+  <div class="eq-card">
+    <div class="eq" id="eq">2 + 3 = ?</div>
+    <div class="eq-sub" id="eq-sub">Add them together!</div>
+  </div>
+  <div class="m-score" id="mscore">Score: 0 / 0</div>
+  <div class="answer-grid" id="agrid"></div>
+</div>
+
+<!-- CELEBRATE -->
+<div class="cel" id="cel" onclick="hideCel()">
+  <div class="cel-ico" id="cel-ico">⭐</div>
+  <div class="cel-txt" id="cel-txt">Well done!</div>
+</div>
+
+<!-- PARENT OVERLAY -->
+<div class="overlay" id="p-overlay" onclick="closeParent()">
+  <div class="overlay-card" onclick="event.stopPropagation()">
+    <button class="modal-x" onclick="closeParent()">✕</button>
+    <div class="modal-title">📊 Progress Report / 学習レポート</div>
+    <div id="p-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONTENT DATA — all 3 levels
+// ═══════════════════════════════════════════════════════
+
+const CONTENT = {
+  pk: {
+    letters: 'abcdefghijklm'.split(''),
+    hints: {a:'Start middle, curve left, down',b:'Down, then bump right',c:'Curve left, almost circle',d:'Circle, then tall line up',e:'Middle line, curve up and around',f:'Curve top, cross middle',g:'Circle, then hook down',h:'Tall line down, hump right',i:'Short line down, dot on top',j:'Short line down, hook, dot',k:'Tall line, kick in and out',l:'Tall line down',m:'Down, hump, hump'},
+    ph_words:[
+      {w:'cat',e:'🐱'},{w:'dog',e:'🐶'},{w:'sun',e:'☀️'},{w:'hat',e:'🎩'},{w:'cup',e:'☕'},
+      {w:'bed',e:'🛏️'},{w:'pig',e:'🐷'},{w:'hen',e:'🐔'},{w:'nut',e:'🌰'},{w:'jam',e:'🫙'},
+      {w:'leg',e:'🦵'},{w:'fox',e:'🦊'},{w:'zip',e:'🤐'},{w:'web',e:'🕸️'},{w:'van',e:'🚐'}
+    ],
+    sp_words:[
+      {w:'cat',e:'🐱'},{w:'dog',e:'🐶'},{w:'hat',e:'🎩'},{w:'sun',e:'☀️'},{w:'pig',e:'🐷'},
+      {w:'cup',e:'☕'},{w:'bed',e:'🛏️'},{w:'hen',e:'🐔'},{w:'jam',e:'🫙'},{w:'fox',e:'🦊'}
+    ],
+    qa:[
+      {q:"What is your name?",a:"My name is [name]."},
+      {q:"How old are you?",a:"I am [age] years old."},
+      {q:"What is your favourite colour?",a:"My favourite colour is blue."},
+      {q:"Can you count to ten?",a:"One, two, three, four, five, six, seven, eight, nine, ten!"},
+      {q:"What is this? (show a picture of a cat)",a:"It is a cat."},
+      {q:"Do you have a pet?",a:"Yes, I have a dog. / No, I do not have a pet."},
+      {q:"What do you like to eat?",a:"I like to eat rice and eggs."},
+      {q:"What colour is the sky?",a:"The sky is blue."},
+      {q:"Point to something red.",a:"(points) This is red."},
+      {q:"Can you clap your hands?",a:"Yes! (claps hands)"}
+    ],
+    math:{add:[[1,1],[1,2],[2,1],[1,3],[2,2],[3,1],[1,4],[2,3],[3,2],[4,1]],sub:[],max:5}
+  },
+  g1: {
+    letters: 'abcdefghijklmnopqrstuvwxyz'.split(''),
+    hints: {a:'Curve left from middle, close it, short line down-right',b:'Tall line down, bump right',c:'Start top, curve left and around',d:'Circle first, then tall line up-right',e:'Start middle, line right, curve up and around',f:'Curve at top, cross the middle',g:'Circle, line down, hook left',h:'Tall line, arch right from middle',i:'Line down, dot above',j:'Line down, hook left, dot above',k:'Line down, kick in and out from middle',l:'Tall line down',m:'Line down, two humps right',n:'Line down, one hump right',o:'Circle',p:'Line down past base, bump right from top',q:'Circle, line down past base right',r:'Line down, small shoulder right',s:'Curve right then left',t:'Cross at top, line down',u:'Line down, curve, line up',v:'Diagonal down-right, up-right',w:'Down, up, down, up',x:'Cross two diagonals',y:'Down-right, down-left from middle',z:'Line right, diagonal down-left, line right'},
+    ph_words:[
+      {w:'cat',e:'🐱'},{w:'dog',e:'🐶'},{w:'sun',e:'☀️'},{w:'hat',e:'🎩'},{w:'cup',e:'☕'},
+      {w:'bed',e:'🛏️'},{w:'pig',e:'🐷'},{w:'hen',e:'🐔'},{w:'nut',e:'🌰'},{w:'jam',e:'🫙'},
+      {w:'leg',e:'🦵'},{w:'fox',e:'🦊'},{w:'zip',e:'🤐'},{w:'web',e:'🕸️'},{w:'van',e:'🚐'},
+      {w:'map',e:'🗺️'},{w:'jug',e:'🪣'},{w:'wax',e:'🕯️'},{w:'kit',e:'🧰'},{w:'yak',e:'🦬'}
+    ],
+    sp_words:[
+      {w:'cat',e:'🐱'},{w:'dog',e:'🐶'},{w:'hat',e:'🎩'},{w:'sun',e:'☀️'},{w:'pig',e:'🐷'},
+      {w:'cup',e:'☕'},{w:'bed',e:'🛏️'},{w:'hen',e:'🐔'},{w:'jam',e:'🫙'},{w:'fox',e:'🦊'},
+      {w:'map',e:'🗺️'},{w:'leg',e:'🦵'},{w:'web',e:'🕸️'},{w:'van',e:'🚐'},{w:'nut',e:'🌰'}
+    ],
+    qa:[
+      {q:"What is your name?",a:"My name is [name]. Nice to meet you."},
+      {q:"How old are you?",a:"I am [age] years old."},
+      {q:"Where do you live?",a:"I live in Tokyo, Japan."},
+      {q:"Do you have any brothers or sisters?",a:"Yes, I have one brother. / No, I am an only child."},
+      {q:"What is your favourite subject?",a:"My favourite subject is art because I love drawing."},
+      {q:"What do you like to do after school?",a:"I like to play in the park and read books."},
+      {q:"Can you tell me about your family?",a:"I live with my mum, dad, and my little sister."},
+      {q:"What is your favourite animal and why?",a:"My favourite animal is a dog because dogs are friendly and cute."},
+      {q:"What did you do last weekend?",a:"Last weekend I went to the park with my family."},
+      {q:"Can you read this word? (shows: 'cat')",a:"The word is 'cat'. C-A-T."},
+      {q:"What comes after the number seven?",a:"After seven comes eight."},
+      {q:"Can you count backwards from ten?",a:"Ten, nine, eight, seven, six, five, four, three, two, one!"},
+      {q:"What is two plus three?",a:"Two plus three equals five."},
+      {q:"Draw a circle. Now draw a square.",a:"(draws) This is a circle. This is a square."},
+      {q:"What is the weather like today?",a:"Today it is sunny and warm."}
+    ],
+    math:{add:[[1,1],[2,3],[4,3],[5,2],[3,4],[6,2],[4,4],[7,1],[3,5],[2,6],[5,4],[8,1],[4,5],[6,3],[7,2]],
+          sub:[[5,2],[6,3],[7,4],[8,3],[9,4],[10,3],[6,2],[8,5],[10,6],[9,5]],max:10}
+  },
+  g2: {
+    letters: 'abcdefghijklmnopqrstuvwxyz'.split(''),
+    hints: {a:'Curve left, close, line down-right',b:'Down, bump right',c:'Curve left',d:'Circle, tall right',e:'Curve right, loop',f:'Hook, cross',g:'Circle, hook down',h:'Down, arch',i:'Down, dot',j:'Down, hook, dot',k:'Down, kick',l:'Tall down',m:'Down, two arches',n:'Down, arch',o:'Circle',p:'Down, bump',q:'Circle, down-right',r:'Down, shoulder',s:'S-curve',t:'Down, cross',u:'Down, curve, up',v:'V',w:'W',x:'X',y:'Down-right, down-left',z:'Right, diagonal, right'},
+    ph_words:[
+      {w:'ship',e:'🚢'},{w:'chin',e:'🫦'},{w:'thin',e:'🧵'},{w:'when',e:'❓'},{w:'ring',e:'💍'},
+      {w:'frog',e:'🐸'},{w:'flag',e:'🚩'},{w:'clap',e:'👏'},{w:'drip',e:'💧'},{w:'grip',e:'✊'},
+      {w:'step',e:'👟'},{w:'spin',e:'🌀'},{w:'trip',e:'🧳'},{w:'snap',e:'📸'},{w:'plan',e:'📋'},
+      {w:'shop',e:'🏪'},{w:'chip',e:'🍟'},{w:'shed',e:'🛖'},{w:'chop',e:'🪓'},{w:'that',e:'👆'}
+    ],
+    sp_words:[
+      {w:'ship',e:'🚢'},{w:'frog',e:'🐸'},{w:'flag',e:'🚩'},{w:'clap',e:'👏'},{w:'drip',e:'💧'},
+      {w:'step',e:'👟'},{w:'spin',e:'🌀'},{w:'snap',e:'📸'},{w:'grip',e:'✊'},{w:'plan',e:'📋'},
+      {w:'chin',e:'🫦'},{w:'shop',e:'🏪'},{w:'chip',e:'🍟'},{w:'trip',e:'🧳'},{w:'shed',e:'🛖'}
+    ],
+    qa:[
+      {q:"Tell me about yourself.",a:"My name is [name]. I am [age] years old and I live in Tokyo. I love reading and playing outside."},
+      {q:"Why do you want to come to this school?",a:"I want to come to this school because I want to learn English and make new friends."},
+      {q:"What is your favourite book and why?",a:"My favourite book is [title] because it is funny and exciting."},
+      {q:"Can you write your name?",a:"(writes) Yes, this is how I write my name."},
+      {q:"What are you good at?",a:"I am good at drawing and I am getting better at reading."},
+      {q:"What would you do if a friend was sad?",a:"I would ask them what is wrong and try to cheer them up."},
+      {q:"How many days are in a week? Name them.",a:"There are seven days. Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday."},
+      {q:"What is five plus six?",a:"Five plus six equals eleven."},
+      {q:"What is ten minus four?",a:"Ten minus four equals six."},
+      {q:"Can you read this sentence? ('The cat sat on the mat.')",a:"The cat sat on the mat."},
+      {q:"What season is it now? What do you wear?",a:"It is winter now. I wear a coat and a scarf."},
+      {q:"Can you spell 'dog'?",a:"D-O-G. Dog."},
+      {q:"What shape has four equal sides?",a:"A square has four equal sides."},
+      {q:"What do plants need to grow?",a:"Plants need water, sunlight, and soil to grow."},
+      {q:"If you have 8 apples and give 3 away, how many do you have?",a:"I have 5 apples left. Eight minus three equals five."}
+    ],
+    math:{add:[[5,6],[7,5],[8,4],[6,7],[9,3],[8,6],[7,7],[9,4],[6,8],[8,5],[9,6],[7,8],[5,9],[8,7],[9,5]],
+          sub:[[10,4],[11,3],[12,5],[13,6],[14,7],[15,8],[12,4],[13,5],[14,6],[11,5]],max:15}
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+
+let curLevel = localStorage.getItem('eiko_level') || null;
+let D = null; // current level data
+
+let curLetter=0, doneLetter=[];
+let canvas, ctx, drawing=false;
+
+let phQ=[], phIdx=0, phCorrect=0, phAnswered=false;
+let spQ=[], spIdx=0, spInput='', spDone=0;
+let skIdx=0, skCount=0, egVisible=false;
+let mathQ=[], mathIdx=0, mathOK=0, mathTotal=0, mathAnswered=false;
+
+// ═══════════════════════════════════════════════════════
+// LEVEL SETUP
+// ═══════════════════════════════════════════════════════
+
+function setLevel(level) {
+  curLevel = level;
+  localStorage.setItem('eiko_level', level);
+  D = CONTENT[level];
+  doneLetter = new Array(D.letters.length).fill(false);
+  // Build math questions
+  D.math._all = [];
+  D.math.add.forEach(([a,b])=>D.math._all.push({a,b,op:'+',ans:a+b}));
+  D.math.sub.forEach(([a,b])=>D.math._all.push({a,b,op:'−',ans:a-b}));
+  // Update badge
+  const names={pk:'Pre-K 🐣',g1:'Grade 1 📚',g2:'Grade 2 🚀'};
+  document.getElementById('level-badge').textContent = names[level];
+  go('home');
+}
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+
+function go(sec) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  if(sec==='splash'){document.getElementById('splash').classList.add('active');return;}
+  document.getElementById(sec).classList.add('active');
+  if(sec==='home') updateHome();
+  else if(sec==='writing') initW();
+  else if(sec==='phonics') initPh();
+  else if(sec==='spelling') initSp();
+  else if(sec==='speaking') initSk();
+  else if(sec==='math') initM();
+}
+
+function goHome(){go('home')}
+
+// ═══════════════════════════════════════════════════════
+// WRITING
+// ═══════════════════════════════════════════════════════
+
+function initW() {
+  doneLetter = new Array(D.letters.length).fill(false);
+  const nav = document.getElementById('lnav');
+  nav.innerHTML = '';
+  D.letters.forEach((l,i)=>{
+    const b=document.createElement('button');
+    b.className='lb'+(doneLetter[i]?' done':'')+(i===curLetter?' cur':'');
+    b.textContent=l;
+    b.onclick=()=>selectLetter(i);
+    nav.appendChild(b);
+  });
+  showLetter(curLetter);
+  setupCanvas();
+}
+
+function selectLetter(i){
+  curLetter=i;
+  document.querySelectorAll('.lb').forEach((b,j)=>{
+    b.className='lb'+(doneLetter[j]?' done':'')+(j===i?' cur':'');
+  });
+  showLetter(i);
+  clearCanvas();
+}
+
+function showLetter(i){
+  document.getElementById('guide-ch').textContent=D.letters[i];
+  document.getElementById('s-hint').textContent=D.hints[D.letters[i]]||'';
+  const pct=doneLetter.filter(Boolean).length/D.letters.length*100;
+  document.getElementById('w-bar').style.width=pct+'%';
+}
+
+function setupCanvas(){
+  canvas=document.getElementById('trace-canvas');
+  const size=canvas.parentElement.offsetWidth;
+  canvas.width=size;canvas.height=size;
+  ctx=canvas.getContext('2d');
+  ctx.strokeStyle='#FF6B9D';ctx.lineWidth=8;ctx.lineCap='round';ctx.lineJoin='round';
+  canvas.addEventListener('mousedown',sd);
+  canvas.addEventListener('mousemove',dr);
+  canvas.addEventListener('mouseup',()=>drawing=false);
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();sd(e.touches[0])},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();dr(e.touches[0])},{passive:false});
+  canvas.addEventListener('touchend',()=>drawing=false);
+}
+
+function gp(e){const r=canvas.getBoundingClientRect(),sx=canvas.width/r.width,sy=canvas.height/r.height;return{x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy}}
+function sd(e){drawing=true;const p=gp(e);ctx.beginPath();ctx.moveTo(p.x,p.y)}
+function dr(e){if(!drawing)return;const p=gp(e);ctx.lineTo(p.x,p.y);ctx.stroke()}
+function clearCanvas(){if(ctx)ctx.clearRect(0,0,canvas.width,canvas.height)}
+
+function letterDone(){
+  doneLetter[curLetter]=true;
+  document.querySelectorAll('.lb')[curLetter].className='lb done';
+  celebrate('⭐','Well done!');
+  clearCanvas();
+  const n=doneLetter.findIndex((d,i)=>!d&&i>curLetter);
+  if(n>-1){setTimeout(()=>selectLetter(n),1000);}
+  else if(doneLetter.every(Boolean)){
+    setTimeout(()=>{celebrate('🎉','All letters done!');saveP('writing',5);setTimeout(goHome,2000)},1000);
+  }
+  setBar('w-bar',doneLetter.filter(Boolean).length,D.letters.length,'var(--wr)');
+}
+
+// ═══════════════════════════════════════════════════════
+// PHONICS
+// ═══════════════════════════════════════════════════════
+
+function initPh(){
+  phQ=shuffle([...D.ph_words]).slice(0,10);
+  phIdx=0;phCorrect=0;showPh();
+}
+
+function showPh(){
+  if(phIdx>=phQ.length){
+    celebrate('🎉',phCorrect+'/'+phQ.length+' correct!');
+    saveP('phonics',Math.round(phCorrect/phQ.length*5));
+    setTimeout(goHome,2000);return;
+  }
+  phAnswered=false;
+  const cur=phQ[phIdx];
+  document.getElementById('ph-word').textContent=cur.w;
+  document.getElementById('ph-img').textContent=cur.e;
+  setBar('ph-bar',phIdx,phQ.length,'var(--ph)');
+  document.getElementById('ph-score').textContent='Score: '+phCorrect+' / '+phIdx;
+  const others=D.ph_words.filter(w=>w.w!==cur.w);
+  const choices=shuffle([cur,...shuffle(others).slice(0,3)]);
+  const grid=document.getElementById('ph-choices');
+  grid.innerHTML='';
+  choices.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='choice';
+    b.innerHTML=c.e+'<br><small>'+c.w+'</small>';
+    b.onclick=()=>checkPh(c.w,cur.w,b,choices,grid);
+    grid.appendChild(b);
+  });
+}
+
+function checkPh(chosen,correct,btn,choices,grid){
+  if(phAnswered)return;
+  phAnswered=true;
+  [...grid.querySelectorAll('.choice')].forEach(b=>{if(b.innerHTML.includes('<br><small>'+correct))b.classList.add('ok')});
+  if(chosen===correct){phCorrect++;btn.classList.add('ok');celebrate('⭐','Correct!')}
+  else{btn.classList.add('no');speak(correct)}
+  phIdx++;
+  document.getElementById('ph-score').textContent='Score: '+phCorrect+' / '+phIdx;
+  setTimeout(showPh,1400);
+}
+
+function hearPh(){speak(phQ[phIdx]?.w||'')}
+
+// ═══════════════════════════════════════════════════════
+// SPELLING
+// ═══════════════════════════════════════════════════════
+
+function initSp(){
+  spQ=shuffle([...D.sp_words]).slice(0,10);
+  spIdx=0;spDone=0;showSp();
+}
+
+function showSp(){
+  if(spIdx>=spQ.length){
+    celebrate('🎉',spDone+'/'+spQ.length+' correct!');
+    saveP('spelling',Math.round(spDone/spQ.length*5));
+    setTimeout(goHome,2000);return;
+  }
+  spInput='';
+  const item=spQ[spIdx];
+  document.getElementById('sp-img').textContent=item.e;
+  updateSpDisplay(item.w,'');
+  setBar('sp-bar',spIdx,spQ.length,'var(--sp)');
+  document.getElementById('sp-hint').textContent='Tap the letters in order!';
+  const letters=shuffle(item.w.split('').concat(shuffle('abcdefghijklmnopqrstuvwxyz'.split('').filter(l=>!item.w.includes(l))).slice(0,4)));
+  const tiles=document.getElementById('sp-tiles');
+  tiles.innerHTML='';
+  letters.forEach(letter=>{
+    const b=document.createElement('button');
+    b.className='tile';b.textContent=letter;
+    b.onclick=()=>tapTile(letter,b,item.w);
+    tiles.appendChild(b);
+  });
+}
+
+function updateSpDisplay(word,input){
+  document.getElementById('spell-display').textContent=word.split('').map((l,i)=>input[i]||'_').join(' ');
+}
+
+function tapTile(letter,btn,word){
+  if(spInput.length>=word.length)return;
+  spInput+=letter;
+  btn.classList.add('used');
+  updateSpDisplay(word,spInput);
+  if(spInput.length===word.length){
+    if(spInput===word){spDone++;celebrate('⭐','Correct! '+word+'!');spIdx++;setTimeout(showSp,1200);}
+    else{document.getElementById('sp-hint').textContent='Try again! The word is: '+word;speak(word);spIdx++;setTimeout(showSp,2000);}
+  }
+}
+
+function hearSp(){speak(spQ[spIdx]?.w||'')}
+function clearSpell(){spInput='';updateSpDisplay(spQ[spIdx]?.w||'','');document.querySelectorAll('.tile').forEach(t=>t.classList.remove('used'))}
+
+// ═══════════════════════════════════════════════════════
+// SPEAKING
+// ═══════════════════════════════════════════════════════
+
+function initSk(){skIdx=0;skCount=0;showSkQ()}
+
+function showSkQ(){
+  if(skIdx>=D.qa.length){
+    celebrate('🎉','Great speaking! '+skCount+'/'+D.qa.length+'!');
+    saveP('speaking',Math.min(5,Math.round(skCount/D.qa.length*5)));
+    setTimeout(goHome,2000);return;
+  }
+  egVisible=false;
+  const item=D.qa[skIdx];
+  document.getElementById('q-num').textContent='Question '+(skIdx+1)+' of '+D.qa.length;
+  document.getElementById('q-txt').textContent=item.q;
+  document.getElementById('eg-txt').textContent=item.a;
+  document.getElementById('eg-box').classList.remove('show');
+  document.getElementById('sk-count').textContent=skCount+' / '+D.qa.length+' done';
+  setBar('sk-bar',skIdx,D.qa.length,'var(--sk)');
+}
+
+function hearQ(){speak(D.qa[skIdx]?.q||'')}
+function toggleEg(){egVisible=!egVisible;document.getElementById('eg-box').classList.toggle('show',egVisible)}
+function skMarkDone(){
+  skCount++;
+  celebrate('⭐','Good sentence!');
+  skIdx++;
+  setTimeout(showSkQ,1000);
+}
+
+// ═══════════════════════════════════════════════════════
+// MATH
+// ═══════════════════════════════════════════════════════
+
+function initM(){
+  mathQ=shuffle([...D.math._all]).slice(0,12);
+  mathIdx=0;mathOK=0;mathTotal=0;showMQ();
+}
+
+function showMQ(){
+  if(mathIdx>=mathQ.length){
+    celebrate('🎉',mathOK+'/'+mathQ.length+' correct!');
+    saveP('math',Math.round(mathOK/mathQ.length*5));
+    setTimeout(goHome,2000);return;
+  }
+  mathAnswered=false;
+  const p=mathQ[mathIdx];
+  document.getElementById('eq').textContent=p.a+' '+p.op+' '+p.b+' = ?';
+  document.getElementById('eq-sub').textContent=p.op==='+'?'Add them together!':'What is left?';
+  setBar('m-bar',mathIdx,mathQ.length,'var(--ma)');
+  document.getElementById('mscore').textContent='Score: '+mathOK+' / '+mathTotal;
+  const correct=p.ans;
+  const set=new Set([correct]);
+  let tries=0;
+  while(set.size<4&&tries++<60){const n=Math.max(0,Math.min(D.math.max+5,correct+(Math.floor(Math.random()*7)-3)));if(n!==correct)set.add(n)}
+  for(let n=0;n<=D.math.max+5&&set.size<4;n++)if(n!==correct)set.add(n);
+  const opts=shuffle([...set]);
+  const grid=document.getElementById('agrid');
+  grid.innerHTML='';
+  opts.forEach(n=>{
+    const b=document.createElement('button');
+    b.className='ab';b.textContent=n;
+    b.onclick=()=>checkM(n,correct,b,grid);
+    grid.appendChild(b);
+  });
+}
+
+function checkM(chosen,correct,btn,grid){
+  if(mathAnswered)return;
+  mathAnswered=true;mathTotal++;
+  [...grid.querySelectorAll('.ab')].forEach(b=>{if(+b.textContent===correct)b.classList.add('ok')});
+  if(chosen===correct){mathOK++;btn.classList.add('ok');celebrate('⭐','Correct!')}
+  else{btn.classList.add('no')}
+  mathIdx++;
+  document.getElementById('mscore').textContent='Score: '+mathOK+' / '+mathTotal;
+  setTimeout(showMQ,1500);
+}
+
+// ═══════════════════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════════════════
+
+function loadP(){try{return JSON.parse(localStorage.getItem('eiko_prog_'+(curLevel||'g1'))||'{"sessions":[]}')}catch{return{sessions:[]}}}
+
+function saveP(section,stars){
+  const data=loadP();
+  const today=new Date().toISOString().slice(0,10);
+  data.sessions.push({date:today,section,stars,ts:Date.now()});
+  if(data.sessions.length>200)data.sessions=data.sessions.slice(-200);
+  localStorage.setItem('eiko_prog_'+(curLevel||'g1'),JSON.stringify(data));
+  updateHome();
+}
+
+function updateHome(){
+  if(!D)return;
+  const data=loadP();
+  const today=new Date().toISOString().slice(0,10);
+  const todaySess=data.sessions.filter(s=>s.date===today);
+  const totalStars=todaySess.reduce((s,x)=>s+(x.stars||0),0);
+  document.getElementById('today-stars').textContent=totalStars>0?('⭐'.repeat(Math.min(totalStars,15))):'🌟 Ready to start!';
+  ['writing','phonics','spelling','speaking','math'].forEach(sec=>{
+    const last=[...data.sessions].reverse().find(x=>x.section===sec);
+    const el=document.getElementById('sub-'+sec);
+    if(el&&last){const fresh=(Date.now()-last.ts)<86400000;el.innerHTML=fresh?'Last: '+('⭐'.repeat(last.stars||0)):'Last: '+last.date}
+  });
+}
+
+function openParent(){
+  const data=loadP();
+  const now=Date.now(),week=7*86400000;
+  const recent=data.sessions.filter(s=>now-s.ts<week);
+  const snames={writing:'✏️ Writing / 書き',phonics:'📖 Phonics / 読み',spelling:'🔤 Spelling / スペリング',speaking:'🗣️ Speaking / スピーキング',math:'➕ Math / 算数'};
+  const lvlNames={pk:'Pre-K 🐣',g1:'Grade 1 📚',g2:'Grade 2 🚀'};
+  const statsHtml=Object.entries(snames).map(([k,label])=>{
+    const sess=recent.filter(s=>s.section===k);
+    const avg=sess.length?(sess.reduce((a,s)=>a+s.stars,0)/sess.length).toFixed(1):'-';
+    return '<div class="srow"><span>'+label+'</span><span class="sval">'+sess.length+'回 '+(sess.length?'⭐'.repeat(Math.round(parseFloat(avg)||0)):'')+' '+avg+'</span></div>';
+  }).join('');
+  const recentHtml=[...data.sessions].reverse().slice(0,10).map(s=>'<div class="sit"><span>'+snames[s.section]+'</span><span>'+s.date+' '+('⭐'.repeat(s.stars||0))+'</span></div>').join('')||'<div style="color:#bbb;text-align:center;padding:14px">まだ記録がありません</div>';
+  document.getElementById('p-body').innerHTML=
+    '<div style="font-size:.82rem;color:#aaa;margin-bottom:6px">レベル: '+lvlNames[curLevel||'g1']+'</div>'+
+    '<div style="font-size:.82rem;color:#aaa;margin-bottom:14px">直近7日間 / Last 7 days</div>'+
+    statsHtml+
+    '<div style="margin-top:16px"><div style="font-weight:700;margin-bottom:8px">最近の練習 / Recent sessions</div>'+recentHtml+'</div>';
+  document.getElementById('p-overlay').classList.add('show');
+}
+
+function closeParent(){document.getElementById('p-overlay').classList.remove('show')}
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function speak(text){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-GB';u.rate=0.75;u.pitch=1.1;
+  speechSynthesis.speak(u);
+}
+
+function celebrate(icon,text){
+  document.getElementById('cel-ico').textContent=icon;
+  document.getElementById('cel-txt').textContent=text;
+  document.getElementById('cel').classList.add('show');
+  setTimeout(()=>document.getElementById('cel').classList.remove('show'),1600);
+}
+
+function hideCel(){document.getElementById('cel').classList.remove('show')}
+
+function setBar(id,cur,total,color){
+  const b=document.getElementById(id);
+  if(b)b.style.width=(total>0?cur/total*100:0)+'%';
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+window.addEventListener('load', ()=>{
+  if(curLevel){
+    setLevel(curLevel);
+  }
+});
+</script>
+</body>
+</html>

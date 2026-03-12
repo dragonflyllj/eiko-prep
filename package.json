@@ -1,0 +1,12 @@
+{
+  "name": "eiko-prep",
+  "version": "1.0.0",
+  "description": "International school readiness app for Japan",
+  "scripts": {
+    "start": "npx serve public -p ${PORT:-3000}",
+    "dev": "npx serve public -p 3000"
+  },
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}
