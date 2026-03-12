@@ -13,5 +13,10 @@
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "categories": ["education", "kids"],
-  "screenshots": []
+  "screenshots": [
+    { "src": "screenshots/screen1-home.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Home screen — choose your practice" },
+    { "src": "screenshots/screen2-levels.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Level selector — Pre-K to Grade 2" },
+    { "src": "screenshots/screen3-math.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Math practice with fun questions" },
+    { "src": "screenshots/screen4-parent.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Parent view — weekly progress report" }
+  ]
 }
