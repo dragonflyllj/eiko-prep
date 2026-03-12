@@ -8,6 +8,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -16,6 +17,7 @@
   --bg:#FFF9F0;--card:#fff;--txt:#2D3436;
 }
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden;max-width:480px;margin:0 auto}
+.card-ico,.splash-logo,.lbtn-ico,.ph-img,.cel-ico{font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif}
 
 /* SCREENS */
 .screen{display:none;min-height:100vh;padding:16px;flex-direction:column}
@@ -114,7 +116,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-h
 .eq{font-size:2.6rem;font-weight:900;color:var(--ma)}
 .eq-sub{font-size:.9rem;color:#aaa;margin-top:6px}
 .answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ab{padding:18px;border:2.5px solid #eee;border-radius:14px;font-family:inherit;font-size:1.5rem;font-weight:900;cursor:pointer;background:#fff;color:#555;transition:.12s}
+.ab{padding:22px;border:2.5px solid #eee;border-radius:14px;font-family:inherit;font-size:1.8rem;font-weight:900;cursor:pointer;background:#fff;color:#555;transition:.12s}
 .ab:active{transform:scale(.94)}
 .ab.ok{background:#e8fdf2;border-color:#2ecc71;color:#27ae60}
 .ab.no{background:#fde8e8;border-color:#e74c3c;color:#c0392b}
@@ -277,11 +279,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-h
   <div class="sec-title">➕ Math Practice</div>
   <div class="pbar-wrap"><div class="pfill" id="m-bar" style="background:var(--ma);width:0%"></div></div>
   <div class="eq-card">
+    <div style="font-size:2.8rem;margin-bottom:8px" id="m-emoji">🧮</div>
     <div class="eq" id="eq">2 + 3 = ?</div>
     <div class="eq-sub" id="eq-sub">Add them together!</div>
   </div>
   <div class="m-score" id="mscore">Score: 0 / 0</div>
   <div class="answer-grid" id="agrid"></div>
+  <div style="text-align:center;margin-top:20px;font-size:2rem;opacity:.15;user-select:none">🔢 🌟 🔢</div>
 </div>
 
 <!-- CELEBRATE -->
@@ -667,6 +671,7 @@ function showMQ(){
   const p=mathQ[mathIdx];
   document.getElementById('eq').textContent=p.a+' '+p.op+' '+p.b+' = ?';
   document.getElementById('eq-sub').textContent=p.op==='+'?'Add them together!':'What is left?';
+  document.getElementById('m-emoji').textContent=p.op==='+'?'🧮':'🔢';
   setBar('m-bar',mathIdx,mathQ.length,'var(--ma)');
   document.getElementById('mscore').textContent='Score: '+mathOK+' / '+mathTotal;
   const correct=p.ans;
