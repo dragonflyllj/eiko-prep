@@ -1,9 +1,12 @@
 {
+  "id": "com.prospect.eikoprepapp",
   "name": "Eikō Prep — International School Readiness",
   "short_name": "Eikō Prep",
   "description": "Help your child prepare for international school admission tests in Japan. Practice writing, phonics, spelling, speaking and math.",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "prefer_related_applications": false,
   "orientation": "portrait",
   "background_color": "#FFF9F0",
   "theme_color": "#FF6B9D",
@@ -13,6 +16,7 @@
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "categories": ["education", "kids"],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "screenshots": [
     { "src": "screenshots/screen1-home.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Home screen — choose your practice" },
     { "src": "screenshots/screen2-levels.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Level selector — Pre-K to Grade 2" },
