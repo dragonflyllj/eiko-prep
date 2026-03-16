@@ -18,9 +18,9 @@
   "categories": ["education", "kids"],
   "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "screenshots": [
-    { "src": "screenshots/screen1-home.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Home screen — choose your practice" },
-    { "src": "screenshots/screen2-levels.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Level selector — Pre-K to Grade 2" },
-    { "src": "screenshots/screen3-math.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Math practice with fun questions" },
-    { "src": "screenshots/screen4-parent.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Parent view — weekly progress report" }
+    { "src": "screenshots/screen1-home.png", "sizes": "556x1170", "type": "image/jpeg", "form_factor": "narrow", "label": "Level selector — Pre-K to Grade 2" },
+    { "src": "screenshots/screen2-practice.png", "sizes": "556x1170", "type": "image/jpeg", "form_factor": "narrow", "label": "Today's Practice — 5 learning sections" },
+    { "src": "screenshots/screen3-progress.png", "sizes": "556x1170", "type": "image/jpeg", "form_factor": "narrow", "label": "Parent view — progress report in JP/EN" },
+    { "src": "screenshots/screen4-math.png", "sizes": "556x1170", "type": "image/jpeg", "form_factor": "narrow", "label": "Math practice — fun questions for kids" }
   ]
 }
