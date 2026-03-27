@@ -13,7 +13,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --pk:#FF6B9D;--g1:#7C6CF6;--g2:#26A69A;
-  --wr:#FF6B9D;--ph:#FF9F43;--sp:#00BCD4;--sk:#26A69A;--ma:#7C6CF6;
+  --wr:#FF6B9D;--ph:#FF9F43;--sp:#00BCD4;--sk:#26A69A;--ma:#7C6CF6;--fi:#E91E63;
   --bg:#FFF9F0;--card:#fff;--txt:#2D3436;
 }
 html{background:#f0f0ff}
@@ -52,10 +52,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-h
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
 .card{background:white;border-radius:20px;padding:20px 10px 14px;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.07);border:3px solid transparent;transition:transform .12s;user-select:none}
 .card:active{transform:scale(.93)}
-.card.wr{border-color:var(--wr)}.card.ph{border-color:var(--ph)}.card.sp{border-color:var(--sp)}.card.sk{border-color:var(--sk)}.card.ma{border-color:var(--ma);grid-column:span 2}
+.card.wr{border-color:var(--wr)}.card.ph{border-color:var(--ph)}.card.sp{border-color:var(--sp)}.card.sk{border-color:var(--sk)}.card.ma{border-color:var(--ma)}.card.fi{border-color:var(--fi)}
 .card-ico{font-size:2.6rem;display:block}
 .card-name{font-size:.98rem;font-weight:900;margin-top:7px}
-.card.wr .card-name{color:var(--wr)}.card.ph .card-name{color:var(--ph)}.card.sp .card-name{color:var(--sp)}.card.sk .card-name{color:var(--sk)}.card.ma .card-name{color:var(--ma)}
+.card.wr .card-name{color:var(--wr)}.card.ph .card-name{color:var(--ph)}.card.sp .card-name{color:var(--sp)}.card.sk .card-name{color:var(--sk)}.card.ma .card-name{color:var(--ma)}.card.fi .card-name{color:var(--fi)}
 .card-sub{font-size:.74rem;color:#bbb;margin-top:2px}
 .change-btn{margin-top:14px;background:none;border:1.5px solid #ddd;border-radius:12px;padding:8px 16px;font-family:inherit;font-size:.82rem;color:#aaa;cursor:pointer;align-self:center}
 .parent-btn{margin-top:10px;background:none;border:1.5px solid #ddd;border-radius:12px;padding:10px 16px;font-family:inherit;font-size:.85rem;color:#888;cursor:pointer;align-self:center}
@@ -84,6 +84,21 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-h
 .btn-sp{background:var(--sp);color:#fff}
 .btn-sk{background:var(--sk);color:#fff}
 .btn-ma{background:var(--ma);color:#fff}
+.btn-fi{background:var(--fi);color:#fff}
+
+/* FIND IT */
+.fi-header{text-align:center;padding:12px;background:#fff;border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:14px}
+.fi-target{font-size:1.1rem;font-weight:700;margin-bottom:8px;color:#555}
+.fi-target-item{font-size:3rem;display:inline-block;background:#fff0f5;border:3px solid var(--fi);border-radius:16px;padding:8px 20px;margin:4px}
+.fi-timer{font-size:1.4rem;font-weight:900;color:var(--fi)}
+.fi-score{font-size:.9rem;color:#aaa;margin-top:4px}
+.fi-grid{display:grid;gap:8px;margin-top:8px}
+.fi-cell{aspect-ratio:1;border-radius:14px;border:2.5px solid #eee;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer;transition:transform .1s,background .2s;user-select:none}
+.fi-cell:active{transform:scale(.9)}
+.fi-cell.found{background:#e8fdf2;border-color:#2ecc71;pointer-events:none}
+.fi-cell.wrong{background:#fde8e8;border-color:#e74c3c}
+.fi-cell.hint{animation:fi-hint .6s ease}
+@keyframes fi-hint{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
 /* PHONICS */
 .word-display{font-size:2.8rem;font-weight:900;text-align:center;padding:18px;background:#fff;border-radius:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
@@ -205,6 +220,11 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-h
       <div class="card-name">Math</div>
       <div class="card-sub" id="sub-math">Numbers & sums</div>
     </div>
+    <div class="card fi" onclick="go('findit')" style="grid-column:span 2">
+      <span class="card-ico">🔍</span>
+      <div class="card-name">Find It!</div>
+      <div class="card-sub" id="sub-findit">Spot the match!</div>
+    </div>
   </div>
   <button class="change-btn" onclick="go('splash')">🔄 Change level</button>
   <button class="parent-btn" onclick="openParent()">👨‍👩‍👧 Parent View / 保護者用</button>
@@ -289,6 +309,23 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-h
   <div style="text-align:center;margin-top:20px;font-size:2rem;opacity:.15;user-select:none">🔢 🌟 🔢</div>
 </div>
 
+<!-- FIND IT -->
+<div id="findit" class="screen">
+  <button class="back-btn" onclick="fiStop();goHome()">←</button>
+  <div class="sec-title">🔍 Find It!</div>
+  <div class="pbar-wrap"><div class="pfill" id="fi-bar" style="background:var(--fi);width:0%"></div></div>
+  <div class="fi-header">
+    <div class="fi-target">Find this!</div>
+    <div class="fi-target-item" id="fi-target">A</div>
+    <div class="fi-timer" id="fi-timer">⏱️ 30s</div>
+    <div class="fi-score" id="fi-score">Round 1 of 8 · Score: 0</div>
+  </div>
+  <div class="fi-grid" id="fi-grid" style="grid-template-columns:repeat(4,1fr)"></div>
+  <div class="btn-row" style="margin-top:12px">
+    <button class="btn btn-ghost" onclick="fiHint()">💡 Hint</button>
+  </div>
+</div>
+
 <!-- CELEBRATE -->
 <div class="cel" id="cel" onclick="hideCel()">
   <div class="cel-ico" id="cel-ico">⭐</div>
@@ -334,7 +371,14 @@ const CONTENT = {
       {q:"Point to something red.",a:"(points) This is red."},
       {q:"Can you clap your hands?",a:"Yes! (claps hands)"}
     ],
-    math:{add:[[1,1],[1,2],[2,1],[1,3],[2,2],[3,1],[1,4],[2,3],[3,2],[4,1]],sub:[],max:5}
+    math:{add:[[1,1],[1,2],[2,1],[1,3],[2,2],[3,1],[1,4],[2,3],[3,2],[4,1]],sub:[],max:5},
+    findit:{
+      modes:[
+        {type:'emoji',label:'Find the animal!',items:['🐱','🐶','🐰','🐻','🐸','🦊','🐷','🐮','🐔','🐧','🐝','🦋','🐢','🐙','🦀','🐳'],gridSize:12,time:35},
+        {type:'letter',label:'Find the letter!',items:'ABCDEFGHIJKLMabcdefghijklm'.split(''),gridSize:12,time:30},
+        {type:'number',label:'Find the number!',items:['1','2','3','4','5','6','7','8','9','10'],gridSize:12,time:30}
+      ]
+    }
   },
   g1: {
     letters: 'abcdefghijklmnopqrstuvwxyz'.split(''),
@@ -368,7 +412,15 @@ const CONTENT = {
       {q:"What is the weather like today?",a:"Today it is sunny and warm."}
     ],
     math:{add:[[1,1],[2,3],[4,3],[5,2],[3,4],[6,2],[4,4],[7,1],[3,5],[2,6],[5,4],[8,1],[4,5],[6,3],[7,2]],
-          sub:[[5,2],[6,3],[7,4],[8,3],[9,4],[10,3],[6,2],[8,5],[10,6],[9,5]],max:10}
+          sub:[[5,2],[6,3],[7,4],[8,3],[9,4],[10,3],[6,2],[8,5],[10,6],[9,5]],max:10},
+    findit:{
+      modes:[
+        {type:'letter',label:'Find the letter!',items:'abcdefghijklmnopqrstuvwxyz'.split(''),gridSize:16,time:30},
+        {type:'emoji',label:'Find the picture!',items:['🐱','🐶','🐰','🐻','🐸','🦊','🐷','🐮','🐔','🐧','🐝','🦋','🐢','🐙','🦀','🐳','🦁','🐯','🦄','🐘'],gridSize:16,time:25},
+        {type:'word',label:'Find the word!',items:['cat','dog','sun','hat','cup','bed','pig','hen','fox','map','leg','van','jam','nut','web','zip'],gridSize:12,time:30},
+        {type:'upper',label:'Find the UPPERCASE!',items:'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),distractors:'abcdefghijklmnopqrstuvwxyz'.split(''),gridSize:16,time:25}
+      ]
+    }
   },
   g2: {
     letters: 'abcdefghijklmnopqrstuvwxyz'.split(''),
@@ -402,7 +454,15 @@ const CONTENT = {
       {q:"If you have 8 apples and give 3 away, how many do you have?",a:"I have 5 apples left. Eight minus three equals five."}
     ],
     math:{add:[[5,6],[7,5],[8,4],[6,7],[9,3],[8,6],[7,7],[9,4],[6,8],[8,5],[9,6],[7,8],[5,9],[8,7],[9,5]],
-          sub:[[10,4],[11,3],[12,5],[13,6],[14,7],[15,8],[12,4],[13,5],[14,6],[11,5]],max:15}
+          sub:[[10,4],[11,3],[12,5],[13,6],[14,7],[15,8],[12,4],[13,5],[14,6],[11,5]],max:15},
+    findit:{
+      modes:[
+        {type:'letter',label:'Find the lowercase!',items:'abcdefghijklmnopqrstuvwxyz'.split(''),distractors:'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),gridSize:20,time:20},
+        {type:'emoji',label:'Find it fast!',items:['🚢','🐸','🚩','👏','💧','👟','🌀','📸','✊','📋','🫦','🏪','🍟','🧳','🛖','🪓','👆','💍','❓','🧵'],gridSize:20,time:20},
+        {type:'word',label:'Find the word!',items:['ship','frog','flag','clap','drip','step','spin','snap','grip','plan','chin','shop','chip','trip','shed'],gridSize:12,time:25},
+        {type:'math',label:'Find the answer!',items:null,gridSize:16,time:25}
+      ]
+    }
   }
 };
 
@@ -454,6 +514,7 @@ function go(sec) {
   else if(sec==='spelling') initSp();
   else if(sec==='speaking') initSk();
   else if(sec==='math') initM();
+  else if(sec==='findit') initFi();
 }
 
 function goHome(){go('home')}
@@ -724,7 +785,7 @@ function updateHome(){
   const todaySess=data.sessions.filter(s=>s.date===today);
   const totalStars=todaySess.reduce((s,x)=>s+(x.stars||0),0);
   document.getElementById('today-stars').textContent=totalStars>0?('⭐'.repeat(Math.min(totalStars,15))):'🌟 Ready to start!';
-  ['writing','phonics','spelling','speaking','math'].forEach(sec=>{
+  ['writing','phonics','spelling','speaking','math','findit'].forEach(sec=>{
     const last=[...data.sessions].reverse().find(x=>x.section===sec);
     const el=document.getElementById('sub-'+sec);
     if(el&&last){const fresh=(Date.now()-last.ts)<86400000;el.innerHTML=fresh?'Last: '+('⭐'.repeat(last.stars||0)):'Last: '+last.date}
@@ -735,7 +796,7 @@ function openParent(){
   const data=loadP();
   const now=Date.now(),week=7*86400000;
   const recent=data.sessions.filter(s=>now-s.ts<week);
-  const snames={writing:'✏️ Writing / 書き',phonics:'📖 Phonics / 読み',spelling:'🔤 Spelling / スペリング',speaking:'🗣️ Speaking / スピーキング',math:'➕ Math / 算数'};
+  const snames={writing:'✏️ Writing / 書き',phonics:'📖 Phonics / 読み',spelling:'🔤 Spelling / スペリング',speaking:'🗣️ Speaking / スピーキング',math:'➕ Math / 算数',findit:'🔍 Find It! / 探せ！'};
   const lvlNames={pk:'Pre-K 🐣',g1:'Grade 1 📚',g2:'Grade 2 🚀'};
   const statsHtml=Object.entries(snames).map(([k,label])=>{
     const sess=recent.filter(s=>s.section===k);
@@ -752,6 +813,140 @@ function openParent(){
 }
 
 function closeParent(){document.getElementById('p-overlay').classList.remove('show')}
+
+// ═══════════════════════════════════════════════════════
+// FIND IT
+// ═══════════════════════════════════════════════════════
+
+let fiRound=0, fiScore=0, fiTotal=8, fiTimerId=null, fiTimeLeft=0, fiTarget='', fiMode=null, fiModeIdx=0, fiHintsLeft=0;
+
+function initFi(){
+  fiRound=0;fiScore=0;fiModeIdx=0;fiHintsLeft=3;
+  nextFiRound();
+}
+
+function nextFiRound(){
+  if(fiRound>=fiTotal){
+    fiStop();
+    celebrate('🎉',fiScore+'/'+fiTotal+' found!');
+    saveP('findit',Math.round(fiScore/fiTotal*5));
+    setTimeout(goHome,2000);
+    return;
+  }
+  const modes=D.findit.modes;
+  fiMode=modes[fiModeIdx%modes.length];
+  fiModeIdx++;
+
+  const grid=document.getElementById('fi-grid');
+  const gs=fiMode.gridSize;
+  const cols=gs<=12?4:gs<=16?4:5;
+  grid.style.gridTemplateColumns='repeat('+cols+',1fr)';
+
+  // Pick target
+  if(fiMode.type==='math'){
+    const a=Math.floor(Math.random()*9)+2;
+    const b=Math.floor(Math.random()*9)+2;
+    fiTarget=String(a+b);
+    document.getElementById('fi-target').textContent=a+' + '+b+' = ?';
+  } else {
+    const pool=fiMode.items;
+    fiTarget=pool[Math.floor(Math.random()*pool.length)];
+    document.getElementById('fi-target').textContent=fiTarget;
+  }
+
+  // Build grid cells
+  const cells=[];
+  // Add 1-3 targets
+  const targetCount=1+Math.floor(Math.random()*2);
+  for(let i=0;i<targetCount;i++) cells.push({v:fiTarget,isTarget:true});
+
+  // Fill rest with distractors
+  const distractorPool=fiMode.distractors||fiMode.items||[];
+  while(cells.length<gs){
+    let d;
+    if(fiMode.type==='math'){
+      // random numbers that aren't the answer
+      d=String(Math.floor(Math.random()*18)+1);
+      if(d===fiTarget) continue;
+    } else {
+      d=distractorPool[Math.floor(Math.random()*distractorPool.length)];
+      if(d===fiTarget) continue;
+    }
+    cells.push({v:d,isTarget:false});
+  }
+
+  shuffle(cells);
+
+  grid.innerHTML='';
+  cells.forEach(c=>{
+    const el=document.createElement('div');
+    el.className='fi-cell';
+    el.textContent=c.v;
+    if(fiMode.type==='word'||fiMode.type==='math'){
+      el.style.fontSize='1rem';el.style.fontWeight='900';
+    }
+    el.onclick=()=>fiTap(el,c.isTarget);
+    grid.appendChild(el);
+  });
+
+  // Timer
+  fiTimeLeft=fiMode.time;
+  updateFiTimer();
+  fiStop();
+  fiTimerId=setInterval(()=>{
+    fiTimeLeft--;
+    updateFiTimer();
+    if(fiTimeLeft<=0){
+      fiStop();
+      celebrate('⏰','Time\'s up!');
+      fiRound++;
+      setTimeout(nextFiRound,1500);
+    }
+  },1000);
+
+  setBar('fi-bar',fiRound,fiTotal,'var(--fi)');
+  document.getElementById('fi-score').textContent='Round '+(fiRound+1)+' of '+fiTotal+' · Score: '+fiScore;
+}
+
+function fiTap(el,isTarget){
+  if(el.classList.contains('found'))return;
+  if(isTarget){
+    el.classList.add('found');
+    fiScore++;
+    // Check if all targets found
+    const remaining=[...document.querySelectorAll('#fi-grid .fi-cell')].filter(c=>!c.classList.contains('found')&&c.textContent===fiTarget);
+    if(remaining.length===0){
+      fiStop();
+      celebrate('⭐','Found it!');
+      fiRound++;
+      document.getElementById('fi-score').textContent='Round '+(fiRound)+' of '+fiTotal+' · Score: '+fiScore;
+      setBar('fi-bar',fiRound,fiTotal,'var(--fi)');
+      setTimeout(nextFiRound,1200);
+    }
+  } else {
+    el.classList.add('wrong');
+    setTimeout(()=>el.classList.remove('wrong'),500);
+  }
+}
+
+function fiHint(){
+  if(fiHintsLeft<=0)return;
+  fiHintsLeft--;
+  const targets=[...document.querySelectorAll('#fi-grid .fi-cell')].filter(c=>!c.classList.contains('found')&&c.textContent===fiTarget);
+  if(targets.length>0){
+    targets[0].classList.add('hint');
+    setTimeout(()=>targets[0].classList.remove('hint'),600);
+  }
+}
+
+function fiStop(){
+  if(fiTimerId){clearInterval(fiTimerId);fiTimerId=null;}
+}
+
+function updateFiTimer(){
+  const el=document.getElementById('fi-timer');
+  if(el) el.textContent='⏱️ '+fiTimeLeft+'s'+(fiHintsLeft>0?' · 💡×'+fiHintsLeft:'');
+}
 
 // ═══════════════════════════════════════════════════════
 // HELPERS
