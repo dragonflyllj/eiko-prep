@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#FF8A3D">
+<title>Momo's Phonics Adventure</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- top bar: back + stars -->
+<header id="topbar" class="hidden">
+  <button id="backBtn" class="round-btn" aria-label="Go back"></button>
+  <div id="starCount" class="star-pill"></div>
+</header>
+
+<main id="app">
+
+  <!-- HOME -->
+  <section id="home" class="screen active">
+    <div class="home-hero">
+      <div id="homeMomo" class="momo-box"></div>
+      <div id="homeBubble" class="bubble">Hi! I am Momo!<br>Let's play with sounds!</div>
+    </div>
+    <h1 class="app-title">Momo's Phonics Adventure</h1>
+    <p class="app-sub">えいごのおとであそぼう!</p>
+    <nav class="menu" id="mainMenu"></nav>
+    <button id="stickerBtn" class="sticker-shelf"></button>
+    <a class="exit-link" href="/">&larr; Eikō Prep home</a>
+  </section>
+
+  <!-- LETTER SOUNDS: sets + grid -->
+  <section id="letters" class="screen">
+    <h2 class="sec-title">Letter Sounds</h2>
+    <p class="sec-sub">Tap a letter to hear its sound!</p>
+    <div id="letterSets"></div>
+  </section>
+
+  <!-- LETTER CARD -->
+  <section id="letterCard" class="screen">
+    <div id="lcCard" class="big-card"></div>
+    <div class="btn-row">
+      <button id="lcHear" class="btn btn-blue"></button>
+      <button id="lcSay" class="btn btn-orange"></button>
+    </div>
+    <button id="lcDone" class="btn btn-green btn-wide"></button>
+    <div class="dots" id="lcDots"></div>
+  </section>
+
+  <!-- GAMES MENU -->
+  <section id="games" class="screen">
+    <h2 class="sec-title">Word Games</h2>
+    <p class="sec-sub">Play and win stars!</p>
+    <nav class="menu" id="gamesMenu"></nav>
+  </section>
+
+  <!-- GAME: SOUND POP -->
+  <section id="gPop" class="screen">
+    <div class="game-head">
+      <div id="popPrompt" class="game-prompt"></div>
+      <button id="popHear" class="round-btn big" aria-label="Hear the sound again"></button>
+    </div>
+    <div id="popArea" class="pop-area"></div>
+    <div id="popProgress" class="game-progress"></div>
+  </section>
+
+  <!-- GAME: WORD BUILDER -->
+  <section id="gBuild" class="screen">
+    <div id="buildPic" class="build-pic"></div>
+    <div id="buildSlots" class="build-slots"></div>
+    <div id="buildTiles" class="build-tiles"></div>
+    <div id="buildProgress" class="game-progress"></div>
+  </section>
+
+  <!-- GAME: RHYME MATCH -->
+  <section id="gRhyme" class="screen">
+    <h2 class="sec-title">Rhyme Match</h2>
+    <p class="sec-sub">Find two words that rhyme, like <b>cat</b> and <b>hat</b>!</p>
+    <div id="rhymeGrid" class="rhyme-grid"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="screen">
+    <div class="quiz-head">
+      <div id="quizNum" class="game-progress"></div>
+      <div id="quizMomo" class="momo-mini"></div>
+    </div>
+    <div id="quizQ" class="quiz-q"></div>
+    <div id="quizOpts" class="quiz-opts"></div>
+  </section>
+
+  <!-- TALK MENU -->
+  <section id="talkMenu" class="screen">
+    <h2 class="sec-title">Talk with Momo</h2>
+    <p class="sec-sub">Pick something to talk about!</p>
+    <nav class="menu" id="talkList"></nav>
+  </section>
+
+  <!-- TALK -->
+  <section id="talk" class="screen">
+    <div class="talk-stage">
+      <div id="talkMomo" class="momo-box small"></div>
+      <div id="talkBubble" class="bubble talk"></div>
+    </div>
+    <div id="talkPrompt" class="talk-prompt"></div>
+    <div id="talkOpts" class="talk-opts"></div>
+    <div id="talkProgress" class="game-progress"></div>
+  </section>
+
+  <!-- STORY MENU -->
+  <section id="storyMenu" class="screen">
+    <h2 class="sec-title">Story Time</h2>
+    <p class="sec-sub">Tap any word to hear it!</p>
+    <nav class="menu" id="storyList"></nav>
+  </section>
+
+  <!-- STORY -->
+  <section id="story" class="screen">
+    <div id="storyScene" class="story-scene"></div>
+    <div id="storyText" class="story-text"></div>
+    <div class="btn-row">
+      <button id="storyRead" class="btn btn-blue"></button>
+      <button id="storyNext" class="btn btn-orange"></button>
+    </div>
+    <div class="dots" id="storyDots"></div>
+  </section>
+
+  <!-- STICKER BOOK -->
+  <section id="stickers" class="screen">
+    <h2 class="sec-title">My Sticker Book</h2>
+    <p class="sec-sub">Win stars to get more stickers!</p>
+    <div id="stickerGrid" class="sticker-grid"></div>
+  </section>
+
+</main>
+
+<!-- celebration overlay -->
+<div id="celebrate" class="celebrate hidden">
+  <div class="cel-inner">
+    <div id="celMomo" class="momo-box"></div>
+    <div id="celMsg" class="cel-msg"></div>
+    <div id="celStars" class="cel-stars"></div>
+    <button id="celBtn" class="btn btn-green btn-wide">Next!</button>
+  </div>
+</div>
+<div id="confetti"></div>
+
+<script src="art.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
