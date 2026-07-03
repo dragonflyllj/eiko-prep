@@ -1,5 +1,9 @@
-const CACHE = 'eiko-prep-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'eiko-prep-v2';
+const ASSETS = [
+  '/', '/index.html', '/manifest.json',
+  '/phonics/', '/phonics/index.html', '/phonics/style.css',
+  '/phonics/art.js', '/phonics/data.js', '/phonics/app.js',
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
