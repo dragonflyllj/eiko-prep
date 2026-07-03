@@ -1,4 +1,4 @@
-/* Momo's Phonics Adventure — app logic */
+/* Mimi's Phonics Quest — level-based adventure game logic */
 (function () {
 'use strict';
 
@@ -8,12 +8,12 @@ const pick = a => a[Math.floor(Math.random() * a.length)];
 const btnIcon = name => iconInBubble(name, '#FFFFFF'); // white badge so icons stay visible on colored buttons
 
 /* ---------------- progress (localStorage) ---------------- */
-const SAVE_KEY = 'momo-phonics-v1';
-let P = { stars: 0, letters: {}, setStars: {}, gameStars: {}, talkStars: {}, storyStars: {}, quizBest: 0 };
+const SAVE_KEY = 'mimi-quest-v1';
+let P = { prog: 0, levelStars: {}, letters: {}, quizBest: 0 };
 try { Object.assign(P, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) {}
 function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(P)); } catch (e) {} }
-function addStars(n) { P.stars += n; save(); renderStarCount(); }
-function renderStarCount() { $('starCount').innerHTML = iconSVG('star') + '<span>' + P.stars + '</span>'; }
+function totalStars() { return Object.values(P.levelStars).reduce((a, b) => a + b, 0); }
+function starPillHTML() { return iconSVG('star') + '<span>' + totalStars() + '</span>'; }
 
 /* ---------------- speech ---------------- */
 const synth = window.speechSynthesis;
@@ -37,19 +37,18 @@ function speak(text, opts, cb) {
   u.lang = (voice && voice.lang) || 'en-US';
   u.rate = opts.rate || 0.85;
   u.pitch = opts.pitch || 1.25;
-  const momoBox = opts.momo ? $(opts.momo) : null;
-  if (momoBox) momoBox.innerHTML = momoSVG('talk');
+  const catBox = opts.cat ? $(opts.cat) : null;
+  if (catBox) catBox.innerHTML = catSVG('talk');
   let fired = false;
   const finish = () => {
     if (fired || token !== speakToken) return;
     fired = true;
-    if (momoBox) momoBox.innerHTML = momoSVG(opts.after || 'idle');
+    if (catBox) catBox.innerHTML = catSVG(opts.after || 'idle');
     if (cb) cb();
   };
   u.onend = u.onerror = finish;
   synth.speak(u);
   // watchdog: some devices never fire onend (e.g. no voices installed).
-  // After the expected duration, finish once the engine is no longer speaking.
   setTimeout(function check() {
     if (fired || token !== speakToken) return;
     if (synth.speaking) setTimeout(check, 400);
@@ -77,12 +76,13 @@ const sfx = {
   pop:   () => { tone(880, 0, 0.07, 'sine', 0.2); tone(1320, 0.05, 0.08, 'sine', 0.15); },
   star:  () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.18, 'triangle', 0.16)); },
   page:  () => tone(440, 0, 0.06, 'sine', 0.08),
+  fanfare: () => { [392, 392, 392, 523, 659, 784].forEach((f, i) => tone(f, i * 0.13, 0.22, 'triangle', 0.16)); },
 };
 
 /* ---------------- confetti ---------------- */
 function confetti() {
   const box = $('confetti');
-  const colors = ['#FF8A3D', '#4A90D9', '#5FBB4E', '#F48FB1', '#FFC93C', '#7C6CF6'];
+  const colors = ['#9DB8CE', '#4A90D9', '#5FBB4E', '#F48FB1', '#FFC93C', '#7C6CF6'];
   for (let i = 0; i < 36; i++) {
     const d = document.createElement('div');
     d.className = 'conf';
@@ -96,129 +96,158 @@ function confetti() {
   }
 }
 
-/* ---------------- celebration overlay ---------------- */
-function celebrate(msg, stars, sayText, onNext) {
-  $('celMomo').innerHTML = momoSVG('cheer');
-  $('celMsg').textContent = msg;
-  $('celStars').innerHTML = iconSVG('star').repeat(stars || 0);
-  $('celebrate').classList.remove('hidden');
-  confetti(); sfx.star();
-  speak(sayText || msg, { momo: 'celMomo', after: 'cheer' });
-  $('celBtn').onclick = () => {
-    stopSpeech();
-    $('celebrate').classList.add('hidden');
-    if (onNext) onNext();
-  };
-}
-
-/* ---------------- navigation ---------------- */
-let navStack = [];
-function show(id, push) {
+/* ---------------- screens ---------------- */
+function show(id) {
   stopSpeech();
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   $(id).classList.add('active');
-  if (push !== false) navStack.push(id);
-  $('topbar').classList.toggle('hidden', id === 'home');
+  $('topbar').classList.toggle('hidden', id === 'map');
   window.scrollTo(0, 0);
 }
-function goBack() {
-  navStack.pop();
-  const prev = navStack[navStack.length - 1] || 'home';
-  // re-render menu screens so progress refreshes
-  if (prev === 'home') renderHome();
-  if (prev === 'letters') renderLetters();
-  if (prev === 'games') renderGames();
-  if (prev === 'talkMenu') renderTalkMenu();
-  if (prev === 'storyMenu') renderStoryMenu();
-  show(prev, false);
-}
-$('backBtn').innerHTML = '<svg viewBox="0 0 100 100"><path d="M62 20 L30 50 L62 80" stroke="#B08050" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-$('backBtn').onclick = () => { sfx.tap(); goBack(); };
+$('backBtn').innerHTML = '<svg viewBox="0 0 100 100"><path d="M62 20 L30 50 L62 80" stroke="#7E9DB8" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+$('backBtn').onclick = () => { sfx.tap(); backToMap(); };
 
-/* ================= HOME ================= */
-function starRow(n, max) {
-  let s = '';
-  for (let i = 0; i < max; i++) s += `<svg viewBox="0 0 100 100" style="opacity:${i < n ? 1 : 0.22}">${ICONS.star}</svg>`;
-  return `<div class="mi-stars">${s}</div>`;
+/* ================= LEVEL ENGINE ================= */
+let curLevel = 0;
+
+function startLevel(i) {
+  curLevel = i;
+  const L = LEVELS[i];
+  $('lvlLabel').innerHTML = `Level ${i + 1}<span>${L.sub}</span>`;
+  if (L.type === 'letters') {
+    letterList = LETTER_SETS[L.set].letters;
+    letterIdx = 0;
+    show('letterCard');
+    openLetterCard();
+  } else if (L.type === 'pop') startPop();
+  else if (L.type === 'build') startBuild();
+  else if (L.type === 'rhyme') startRhyme();
+  else if (L.type === 'quiz') startQuiz(L.pass || 6);
+  else if (L.type === 'talk') startTalk(TALKS.find(t => t.id === L.id));
+  else if (L.type === 'story') startStory(STORIES.find(s => s.id === L.id));
 }
-function menuItem(icon, color, name, sub, starsHtml, locked) {
-  return `<button class="menu-item${locked ? ' locked' : ''}" style="--c:${color}">
-    ${iconInBubble(icon, color + '22')}
-    <div class="mi-info"><div class="mi-name">${name}</div><div class="mi-sub">${sub}</div></div>
-    ${locked ? iconSVG('lock', 'pic').replace('class="pic"', 'class="pic" style="width:30px;height:30px"') : (starsHtml || '')}
-  </button>`;
-}
-function renderHome() {
-  renderStarCount();
-  $('homeMomo').innerHTML = momoSVG('idle');
-  const learned = Object.keys(P.letters).length;
-  const talkLocked = P.stars < TALK_UNLOCK;
-  const talkSub = talkLocked
-    ? `Win ${TALK_UNLOCK - P.stars} more stars to unlock! あと${TALK_UNLOCK - P.stars}こ`
-    : 'Chat with Momo! えいかいわ';
-  $('mainMenu').innerHTML =
-    menuItem('speaker', '#FF9F43', 'Letter Sounds', `Learn the sounds! ${learned}/26 · フォニックス`) +
-    menuItem('ball', '#4A90D9', 'Word Games', 'Pop, build and match! ゲーム') +
-    menuItem('pencil', '#7C6CF6', 'Quiz Time', `Show what you know! テスト${P.quizBest ? ' · Best: ' + P.quizBest + '/10' : ''}`) +
-    menuItem('chat', '#5FBB4E', 'Talk with Momo', talkSub, '', talkLocked) +
-    menuItem('book', '#E85D75', 'Story Time', 'Funny little stories! おはなし');
-  const items = $('mainMenu').querySelectorAll('.menu-item');
-  items[0].onclick = () => { sfx.tap(); renderLetters(); show('letters'); };
-  items[1].onclick = () => { sfx.tap(); renderGames(); show('games'); };
-  items[2].onclick = () => { sfx.tap(); startQuiz(); };
-  items[3].onclick = () => {
-    sfx.tap();
-    if (P.stars < TALK_UNLOCK) {
-      $('homeMomo').innerHTML = momoSVG('think');
-      speak(`Learn your sounds first! Win ${TALK_UNLOCK - P.stars} more stars, then we can talk!`, { momo: 'homeMomo' });
-      $('homeBubble').innerHTML = `Win <b>${TALK_UNLOCK - P.stars}</b> more stars<br>and we can talk together!`;
-    } else { renderTalkMenu(); show('talkMenu'); }
+
+function levelComplete(stars, sayText) {
+  const L = LEVELS[curLevel];
+  const prev = P.levelStars[curLevel] || 0;
+  P.levelStars[curLevel] = Math.max(prev, stars);
+  if (curLevel === P.prog) P.prog = Math.min(P.prog + 1, LEVELS.length);
+  save();
+  const finished = curLevel === LEVELS.length - 1;
+  $('celCat').innerHTML = catSVG('cheer');
+  $('celMsg').textContent = finished ? 'QUEST COMPLETE! You are a champion!' : `Level ${curLevel + 1} clear!`;
+  $('celStars').innerHTML = iconSVG('star').repeat(stars);
+  $('celBtn').textContent = finished ? 'Hooray!' : 'Next!';
+  $('celebrate').classList.remove('hidden');
+  confetti();
+  if (L.boss || finished) sfx.fanfare(); else sfx.star();
+  speak(sayText || (finished
+    ? 'You finished the whole quest! You are my English champion! Meow meow hooray!'
+    : `Level clear! ${stars === 3 ? 'Three stars! Purr-fect!' : pick(PRAISE)}`),
+    { cat: 'celCat', after: 'cheer' });
+  $('celBtn').onclick = () => {
+    stopSpeech();
+    $('celebrate').classList.add('hidden');
+    backToMap();
   };
-  items[4].onclick = () => { sfx.tap(); renderStoryMenu(); show('storyMenu'); };
-
-  const got = STICKERS.filter(s => P.stars >= s.need);
-  $('stickerBtn').innerHTML = (got.length ? got.slice(-3).map(s => iconSVG(s.icon)).join('') : iconSVG('star')) +
-    `<span>My Sticker Book (${got.length}/${STICKERS.length})</span>`;
-  $('stickerBtn').onclick = () => { sfx.tap(); renderStickers(); show('stickers'); };
 }
-$('homeMomo').addEventListener('click', () => {
-  sfx.tap();
-  speak(pick(['Hi! I am Momo the fox!', 'Let us play with sounds!', 'You are my favorite friend!', 'Tap Letter Sounds to start!']),
-    { momo: 'homeMomo', after: 'happy' });
-});
 
-/* ================= LETTER SOUNDS ================= */
-let currentLetterList = [];
-let currentLetterIdx = 0;
+function levelFail(msg, sayText) {
+  $('failCat').innerHTML = catSVG('oops');
+  $('failMsg').textContent = msg;
+  $('failbox').classList.remove('hidden');
+  sfx.bad();
+  speak(sayText || 'So close! Cats always try again. Let us go one more time!', { cat: 'failCat', after: 'think' });
+  $('failRetry').onclick = () => { sfx.tap(); stopSpeech(); $('failbox').classList.add('hidden'); startLevel(curLevel); };
+  $('failMap').onclick = () => { sfx.tap(); stopSpeech(); $('failbox').classList.add('hidden'); backToMap(); };
+}
 
-function renderLetters() {
-  let html = '';
-  LETTER_SETS.forEach((set, si) => {
-    const done = set.letters.every(l => P.letters[l]);
-    html += `<div class="set-block"><div class="set-name">${done ? iconSVG('check') : ''}${set.name} ${done ? '· Done!' : ''}</div><div class="letter-grid">`;
-    set.letters.forEach(l => {
-      const d = LETTERS[l];
-      html += `<button class="letter-tile${P.letters[l] ? ' learned' : ''}" data-l="${l}" data-set="${si}">
-        ${P.letters[l] ? `<svg class="lt-check" viewBox="0 0 100 100">${ICONS.check}</svg>` : ''}
-        <div class="lt-char">${l.toUpperCase()}${l}</div>${iconSVG(d.icon)}</button>`;
-    });
-    html += '</div></div>';
-  });
-  $('letterSets').innerHTML = html;
-  $('letterSets').querySelectorAll('.letter-tile').forEach(b => {
-    b.onclick = () => {
+function backToMap() {
+  renderMap();
+  show('map');
+  // scroll the current level into view
+  const cur = document.querySelector('.lvl-node.cur') || document.querySelector('.lvl-node.done:last-of-type');
+  if (cur) setTimeout(() => cur.scrollIntoView({ block: 'center', behavior: 'smooth' }), 80);
+}
+
+/* ================= QUEST MAP ================= */
+const TRAIL_X = [26, 50, 74, 50]; // snake pattern (percent)
+const TRAIL_STEP = 112;
+
+function renderMap() {
+  $('mapStars').innerHTML = starPillHTML();
+  $('mapCat').innerHTML = catSVG('happy');
+  const got = STICKERS.filter(s => totalStars() >= s.need).length;
+  $('stickerBtn').innerHTML = iconSVG('trophy') + `<span>${got}/${STICKERS.length}</span>`;
+  const done = P.prog;
+  $('mapBubble').textContent = done === 0
+    ? "Let's go! Tap Level 1!"
+    : done >= LEVELS.length
+      ? 'You beat every level! You are amazing!'
+      : `You cleared ${done} ${done === 1 ? 'level' : 'levels'}! On to Level ${done + 1}!`;
+
+  const trail = $('mapTrail');
+  const H = LEVELS.length * TRAIL_STEP + 60;
+  trail.style.height = H + 'px';
+  trail.innerHTML = '';
+
+  // dotted path connecting the levels
+  const w = trail.clientWidth || 400;
+  const pts = LEVELS.map((_, i) => [w * TRAIL_X[i % 4] / 100, i * TRAIL_STEP + 58]);
+  let d = `M ${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+    d += ` C ${x0} ${y0 + 56}, ${x1} ${y1 - 56}, ${x1} ${y1}`;
+  }
+  trail.insertAdjacentHTML('beforeend',
+    `<svg class="trail-path" width="${w}" height="${H}" viewBox="0 0 ${w} ${H}">
+       <path d="${d}" fill="none" stroke="#E8D9BF" stroke-width="10" stroke-linecap="round" stroke-dasharray="1 22"/>
+     </svg>`);
+
+  LEVELS.forEach((L, i) => {
+    const state = i < P.prog ? 'done' : i === P.prog ? 'cur' : 'locked';
+    const stars = P.levelStars[i] || 0;
+    const node = document.createElement('button');
+    node.className = `lvl-node ${state}${L.boss ? ' boss' : ''}`;
+    node.style.left = TRAIL_X[i % 4] + '%';
+    node.style.top = (i * TRAIL_STEP + 58) + 'px';
+    node.innerHTML = `
+      <span class="lvl-num">${i + 1}</span>
+      ${iconSVG(state === 'locked' ? 'lock' : L.icon)}
+      <span class="lvl-stars">${stars ? iconSVG('star').repeat(stars) : ''}</span>
+      <span class="lvl-name">${L.name}<i>${L.sub}</i></span>`;
+    node.onclick = () => {
       sfx.tap();
-      const si = +b.dataset.set;
-      currentLetterList = LETTER_SETS[si].letters;
-      currentLetterIdx = currentLetterList.indexOf(b.dataset.l);
-      openLetterCard();
-      show('letterCard');
+      if (state === 'locked') {
+        node.classList.remove('shake'); void node.offsetWidth; node.classList.add('shake');
+        speak(`Clear level ${P.prog + 1} first! You can do it!`, {});
+        return;
+      }
+      startLevel(i);
     };
+    trail.appendChild(node);
+    if (state === 'cur') {
+      const cat = document.createElement('div');
+      cat.className = 'trail-cat';
+      cat.style.left = (TRAIL_X[i % 4] + (TRAIL_X[i % 4] <= 30 ? 16 : -16)) + '%';
+      cat.style.top = (i * TRAIL_STEP + 44) + 'px';
+      cat.innerHTML = catSVG('idle');
+      trail.appendChild(cat);
+    }
   });
 }
+$('mapCat').addEventListener('click', () => {
+  sfx.tap();
+  speak(pick(['Meow! I am Mimi the cat!', 'Let us clear some levels!', 'You are my favorite friend!', 'Adventure time! Meow!']),
+    { cat: 'mapCat', after: 'happy' });
+});
+$('stickerBtn').onclick = () => { sfx.tap(); renderStickers(); show('stickers'); };
+
+/* ================= LETTER LEVELS ================= */
+let letterList = [], letterIdx = 0;
 
 function openLetterCard() {
-  const l = currentLetterList[currentLetterIdx];
+  const l = letterList[letterIdx];
   const d = LETTERS[l];
   const wordHtml = d.word.split('').map((ch, i) =>
     (d.word.indexOf(l) === i || (l === 'x' && ch === 'x')) ? `<b>${ch}</b>` : ch).join('');
@@ -229,65 +258,45 @@ function openLetterCard() {
     ${d.note ? `<div class="bc-note">${d.note}</div>` : ''}`;
   $('lcHear').innerHTML = btnIcon('speaker') + 'Hear it';
   $('lcSay').innerHTML = btnIcon('mic') + 'You say it!';
-  $('lcDone').innerHTML = btnIcon('check') + (P.letters[l] ? 'Next letter' : 'I know it!');
-  $('lcDots').innerHTML = currentLetterList.map((_, i) => `<span class="${i === currentLetterIdx ? 'on' : ''}"></span>`).join('');
+  $('lcDone').innerHTML = btnIcon('check') + (letterIdx === letterList.length - 1 ? 'I know it! Finish!' : 'I know it!');
+  $('lcDots').innerHTML = letterList.map((_, i) => `<span class="${i === letterIdx ? 'on' : ''}"></span>`).join('');
   sayLetter(l);
 }
 function sayLetter(l) {
   const d = LETTERS[l];
   speak(`${l}. ${l} says ${d.say}. ${d.say}, ${d.say}, ${d.word}!`, {});
 }
-$('lcHear').onclick = () => { sfx.tap(); sayLetter(currentLetterList[currentLetterIdx]); };
+$('lcHear').onclick = () => { sfx.tap(); sayLetter(letterList[letterIdx]); };
 $('lcSay').onclick = () => {
   sfx.tap();
-  const l = currentLetterList[currentLetterIdx];
-  const d = LETTERS[l];
+  const d = LETTERS[letterList[letterIdx]];
   speak(`Your turn! Say it nice and loud: ${d.say}!`, {}, () =>
     setTimeout(() => speak(pick(PRAISE), {}), 1500));
 };
 $('lcDone').onclick = () => {
-  const l = currentLetterList[currentLetterIdx];
-  const first = !P.letters[l];
-  P.letters[l] = 1; save();
   sfx.good();
-  const set = LETTER_SETS.find(s => s.letters.includes(l));
-  const si = LETTER_SETS.indexOf(set);
-  const setDone = set.letters.every(x => P.letters[x]);
-  if (setDone && !P.setStars[si]) {
-    P.setStars[si] = 1;
-    addStars(2);
-    celebrate(`${set.name} complete!`, 2, `Amazing! You know all the sounds in ${set.name}! Two stars for you!`, () => {
-      renderLetters(); show('letters', false); navStack.pop();
-    });
-    return;
-  }
-  if (currentLetterIdx < currentLetterList.length - 1) {
-    currentLetterIdx++;
+  P.letters[letterList[letterIdx]] = 1;
+  save();
+  if (letterIdx < letterList.length - 1) {
+    letterIdx++;
     openLetterCard();
   } else {
-    renderLetters(); goBack();
+    levelComplete(3, 'You learned all the new sounds! Three stars! Meow-velous!');
   }
 };
 
-/* ================= GAMES MENU ================= */
-function renderGames() {
-  $('gamesMenu').innerHTML =
-    menuItem('balloon', '#4A90D9', 'Sound Pop', 'Pop the bubble with the right sound!', starRow(Math.min(P.gameStars.pop || 0, 3), 3)) +
-    menuItem('box', '#FF9F43', 'Word Builder', 'Build words with letter blocks!', starRow(Math.min(P.gameStars.build || 0, 3), 3)) +
-    menuItem('heart', '#7C6CF6', 'Rhyme Match', 'Find words that rhyme!', starRow(Math.min(P.gameStars.rhyme || 0, 3), 3));
-  const items = $('gamesMenu').querySelectorAll('.menu-item');
-  items[0].onclick = () => { sfx.tap(); startPop(); };
-  items[1].onclick = () => { sfx.tap(); startBuild(); };
-  items[2].onclick = () => { sfx.tap(); startRhyme(); };
+/* helper: letters the child has met so far (fallback: first two sets) */
+function learnedPool() {
+  const learned = Object.keys(P.letters);
+  return learned.length >= 6 ? learned
+    : [...new Set(LETTER_SETS[0].letters.concat(learned))];
 }
 
-/* ---------- game: Sound Pop ---------- */
+/* ================= LEVEL: SOUND POP ================= */
 const POP_COLORS = ['#4A90D9', '#E85D75', '#5FBB4E', '#F5A623', '#7C6CF6'];
 let pop = null;
 function startPop() {
-  const learned = Object.keys(P.letters);
-  const poolSrc = learned.length >= 6 ? learned : LETTER_SETS[0].letters.concat(learned);
-  pop = { round: 0, total: 8, score: 0, pool: [...new Set(poolSrc)] };
+  pop = { round: 0, total: 8, score: 0, pool: learnedPool() };
   show('gPop');
   $('popHear').innerHTML = iconSVG('speaker');
   popRound();
@@ -299,7 +308,7 @@ function popRound() {
   const others = shuffle(pop.pool.filter(l => l !== target && LETTERS[l].say !== LETTERS[target].say)).slice(0, 3);
   pop.target = target;
   $('popPrompt').textContent = 'Pop the bubble that says...';
-  $('popProgress').textContent = `Bubble ${pop.round} of ${pop.total}`;
+  $('popProgress').textContent = `Bubble ${pop.round} of ${pop.total} · Score ${pop.score}`;
   const area = $('popArea');
   area.innerHTML = '';
   const spots = shuffle([[8, 8], [52, 14], [14, 44], [56, 50], [30, 72]]).slice(0, 4);
@@ -318,31 +327,38 @@ function popRound() {
 }
 $('popHear').onclick = () => { sfx.tap(); if (pop) speak(`${LETTERS[pop.target].say}! ${LETTERS[pop.target].say}!`, {}); };
 function popTap(b, l) {
+  if (pop.locked) return;
   if (l === pop.target) {
+    pop.locked = true;
     sfx.pop(); pop.score++;
     b.classList.add('popping');
     speak(pick(PRAISE), {}, null);
-    setTimeout(popRound, 700);
+    setTimeout(() => { pop.locked = false; popRound(); }, 700);
   } else {
+    // a wrong pop uses up this bubble round
+    pop.locked = true;
     sfx.bad();
     b.classList.remove('nope'); void b.offsetWidth; b.classList.add('nope');
-    speak(pick(TRY_AGAIN), {});
+    document.querySelectorAll('.pop-bubble').forEach(x => {
+      if (x.textContent === pop.target) x.classList.add('popping');
+    });
+    speak(`Oops! It was ${pop.target}! ${LETTERS[pop.target].say}!`, {});
+    setTimeout(() => { pop.locked = false; popRound(); }, 1300);
   }
 }
 function popEnd() {
-  const won = pop.score >= 6;
-  if (won) { P.gameStars.pop = (P.gameStars.pop || 0) + 1; addStars(1); }
-  save();
-  celebrate(won ? `You popped ${pop.score} of ${pop.total}!` : `You popped ${pop.score}! So close!`,
-    won ? 1 : 0,
-    won ? 'Pop pop pop! You have super fox ears! One star for you!' : 'Good popping! Play again to win a star!',
-    () => { renderGames(); show('games', false); navStack.pop(); });
+  if (pop.score >= 6) {
+    const stars = pop.score >= 8 ? 3 : pop.score >= 7 ? 2 : 1;
+    levelComplete(stars, `Pop pop pop! You popped ${pop.score} bubbles! You have super cat ears!`);
+  } else {
+    levelFail(`You popped ${pop.score} of ${pop.total}. Pop 6 to clear!`);
+  }
 }
 
-/* ---------- game: Word Builder ---------- */
+/* ================= LEVEL: WORD BUILDER ================= */
 let build = null;
 function startBuild() {
-  build = { words: shuffle(BUILD_WORDS).slice(0, 4), idx: 0, done: 0 };
+  build = { words: shuffle(BUILD_WORDS).slice(0, 4), idx: 0, next: 0, mistakes: 0 };
   show('gBuild');
   buildWord();
 }
@@ -352,7 +368,7 @@ function buildWord() {
   build.next = 0;
   $('buildPic').innerHTML = iconInBubble(item.icon, '#FFF4DC');
   $('buildSlots').innerHTML = w.split('').map(() => '<div class="build-slot"></div>').join('');
-  $('buildTiles').innerHTML = shuffle(w.split('')).map((ch, i) =>
+  $('buildTiles').innerHTML = shuffle(w.split('')).map(ch =>
     `<button class="build-tile" data-ch="${ch}">${ch}</button>`).join('');
   $('buildProgress').textContent = `Word ${build.idx + 1} of ${build.words.length}`;
   $('buildTiles').querySelectorAll('.build-tile').forEach(t => { t.onclick = () => buildTap(t, w); });
@@ -371,33 +387,32 @@ function buildTap(tile, w) {
     if (build.next < w.length) {
       speak(ld ? ld.say : ch, { rate: 0.8 });
     } else {
-      // blend it!
       const sounds = w.split('').map(c => (LETTERS[c] ? LETTERS[c].say : c)).join('... ');
       sfx.good();
       speak(`${sounds}... ${w}! ${w}! ${pick(PRAISE)}`, {}, () => {
         build.idx++;
         if (build.idx < build.words.length) buildWord();
         else {
-          P.gameStars.build = (P.gameStars.build || 0) + 1; addStars(1); save();
-          celebrate('You built all the words!', 1, 'What a word builder! One shiny star for you!',
-            () => { renderGames(); show('games', false); navStack.pop(); });
+          const stars = build.mistakes === 0 ? 3 : build.mistakes <= 2 ? 2 : 1;
+          levelComplete(stars, 'You built all the words! What a word builder!');
         }
       });
     }
   } else {
     sfx.bad();
+    build.mistakes++;
     tile.classList.remove('nope'); void tile.offsetWidth; tile.classList.add('nope');
     setTimeout(() => tile.classList.remove('nope'), 450);
     speak(pick(TRY_AGAIN), {});
   }
 }
 
-/* ---------- game: Rhyme Match ---------- */
+/* ================= LEVEL: RHYME MATCH ================= */
 let rhyme = null;
 function startRhyme() {
   const pairs = shuffle(RHYME_PAIRS).slice(0, 4);
   const cards = shuffle(pairs.flatMap((p, pi) => p.map(w => ({ w, pi }))));
-  rhyme = { cards, open: [], matched: 0, lock: false, total: pairs.length };
+  rhyme = { cards, open: [], matched: 0, misses: 0, lock: false, total: pairs.length };
   show('gRhyme');
   $('rhymeGrid').innerHTML = cards.map((c, i) => `
     <button class="rhyme-card" data-i="${i}">
@@ -425,12 +440,12 @@ function rhymeTap(b) {
         speak(`${ca.w} and ${cb.w}! They rhyme! ${pick(PRAISE)}`, {});
         rhyme.matched++;
         if (rhyme.matched === rhyme.total) {
-          P.gameStars.rhyme = (P.gameStars.rhyme || 0) + 1; addStars(1); save();
-          setTimeout(() => celebrate('All rhymes found!', 1, 'Cat, hat! Dog, log! You are the rhyme king! One star!',
-            () => { renderGames(); show('games', false); navStack.pop(); }), 900);
+          const stars = rhyme.misses <= 1 ? 3 : rhyme.misses <= 3 ? 2 : 1;
+          setTimeout(() => levelComplete(stars, 'Cat, hat! Dog, log! You are the rhyme king!'), 900);
         }
       } else {
         sfx.bad();
+        rhyme.misses++;
         a.classList.remove('open'); bb.classList.remove('open');
         speak('Hmm, those do not rhyme. Try again!', {});
       }
@@ -439,40 +454,37 @@ function rhymeTap(b) {
   }
 }
 
-/* ================= QUIZ ================= */
+/* ================= LEVEL: QUIZ (boss) ================= */
 let quiz = null;
 function makeQuizQuestions() {
   const learned = Object.keys(P.letters);
   const letterPool = learned.length >= 8 ? learned : [...new Set(LETTER_SETS[0].letters.concat(LETTER_SETS[1].letters, learned))];
   const qs = [];
-  // type 1: hear a sound -> pick the letter
   shuffle(letterPool).slice(0, 4).forEach(l => {
     const wrong = shuffle(letterPool.filter(x => x !== l && LETTERS[x].say !== LETTERS[l].say)).slice(0, 3);
     qs.push({ type: 'sound2letter', target: l, opts: shuffle([l].concat(wrong)) });
   });
-  // type 2: picture -> first sound
   shuffle(BUILD_WORDS).slice(0, 3).forEach(bw => {
     const l = bw.w[0];
     const wrong = shuffle(letterPool.filter(x => x !== l && LETTERS[x].say !== LETTERS[l].say)).slice(0, 3);
     qs.push({ type: 'pic2letter', word: bw, target: l, opts: shuffle([l].concat(wrong)) });
   });
-  // type 3: read the word -> pick the picture
   shuffle(BUILD_WORDS).slice(0, 3).forEach(bw => {
     const wrong = shuffle(BUILD_WORDS.filter(x => x.w !== bw.w)).slice(0, 3);
     qs.push({ type: 'word2pic', word: bw, opts: shuffle([bw].concat(wrong)) });
   });
   return shuffle(qs).slice(0, 10);
 }
-function startQuiz() {
-  quiz = { qs: makeQuizQuestions(), i: 0, score: 0, answered: false };
+function startQuiz(passScore) {
+  quiz = { qs: makeQuizQuestions(), i: 0, score: 0, answered: false, pass: passScore };
   show('quiz');
   quizQuestion();
 }
 function quizQuestion() {
   const q = quiz.qs[quiz.i];
   quiz.answered = false;
-  $('quizNum').textContent = `Question ${quiz.i + 1} of ${quiz.qs.length} · Score ${quiz.score}`;
-  $('quizMomo').innerHTML = momoSVG('think');
+  $('quizNum').textContent = `Question ${quiz.i + 1} of ${quiz.qs.length} · Score ${quiz.score} · Need ${quiz.pass}`;
+  $('quizCat').innerHTML = catSVG('think');
   let qHtml = '', say = '';
   if (q.type === 'sound2letter') {
     say = `Which letter says ${LETTERS[q.target].say}?`;
@@ -503,13 +515,12 @@ function quizAnswer(b, q) {
   if (correct) {
     quiz.score++; sfx.good();
     b.classList.add('ok');
-    $('quizMomo').innerHTML = momoSVG('cheer');
+    $('quizCat').innerHTML = catSVG('cheer');
     speak(pick(PRAISE), {});
   } else {
     sfx.bad();
     b.classList.add('no');
-    $('quizMomo').innerHTML = momoSVG('oops');
-    // reveal the right one
+    $('quizCat').innerHTML = catSVG('oops');
     $('quizOpts').querySelectorAll('.quiz-opt').forEach(o => {
       const ok = q.type === 'word2pic' ? o.dataset.v === q.word.w : o.dataset.v === q.target;
       if (ok) o.classList.add('ok');
@@ -523,27 +534,20 @@ function quizAnswer(b, q) {
   }, 1400);
 }
 function quizEnd() {
-  const s = quiz.score, n = quiz.qs.length;
-  let stars = s >= 9 ? 2 : s >= 6 ? 1 : 0;
-  if (stars) addStars(stars);
+  const s = quiz.score;
   if (s > (P.quizBest || 0)) P.quizBest = s;
   save();
-  celebrate(`You got ${s} out of ${n}!`, stars,
-    stars === 2 ? `Incredible! ${s} out of ${n}! Two whole stars! You are a phonics champion!` :
-    stars === 1 ? `Great job! ${s} out of ${n}! One star for you!` :
-    `You got ${s}! Keep practicing your sounds and try again!`,
-    () => { renderHome(); show('home', false); navStack = ['home']; });
+  if (s >= quiz.pass) {
+    const stars = s >= 9 ? 3 : s >= 7 ? 2 : 1;
+    levelComplete(stars, `You beat the boss quiz with ${s} out of 10! You are a phonics champion!`);
+  } else {
+    levelFail(`You got ${s} of 10. Get ${quiz.pass} to beat the boss!`,
+      `You got ${s}! The boss is tricky. Practice your sounds and try again!`);
+  }
 }
 
-/* ================= TALK TIME ================= */
+/* ================= LEVEL: TALK ================= */
 let talk = null;
-function renderTalkMenu() {
-  $('talkList').innerHTML = TALKS.map(t =>
-    menuItem(t.icon, t.color, t.title, t.jp, starRow(Math.min(P.talkStars[t.id] || 0, 3), 3))).join('');
-  $('talkList').querySelectorAll('.menu-item').forEach((b, i) => {
-    b.onclick = () => { sfx.tap(); startTalk(TALKS[i]); };
-  });
-}
 function startTalk(t) {
   talk = { t, step: 0 };
   show('talk');
@@ -552,11 +556,11 @@ function startTalk(t) {
 function talkStep() {
   const t = talk.t, st = t.steps[talk.step];
   $('talkProgress').textContent = `${talk.step + 1} of ${t.steps.length}`;
-  $('talkMomo').innerHTML = momoSVG('idle');
+  $('talkCat').innerHTML = catSVG('idle');
   $('talkBubble').textContent = st.m;
-  $('talkPrompt').innerHTML = iconSVG('ear') + 'Listen to Momo...';
+  $('talkPrompt').innerHTML = iconSVG('ear') + 'Listen to Mimi...';
   $('talkOpts').innerHTML = '';
-  speak(st.m, { momo: 'talkMomo' }, () => {
+  speak(st.m, { cat: 'talkCat' }, () => {
     $('talkPrompt').innerHTML = iconSVG('chat') + 'Tap what YOU want to say!';
     $('talkOpts').innerHTML = st.opts.map((o, i) =>
       `<button class="talk-opt" data-i="${i}">${iconSVG('chat')}${o.t}</button>`).join('');
@@ -584,33 +588,25 @@ function talkSaid() {
   const opt = talk.opt;
   $('talkOpts').innerHTML = '';
   $('talkPrompt').innerHTML = iconSVG('star') + 'Wonderful talking!';
-  $('talkMomo').innerHTML = momoSVG('happy');
+  $('talkCat').innerHTML = catSVG('happy');
   $('talkBubble').textContent = opt.r;
-  speak(opt.r, { momo: 'talkMomo', after: 'happy' }, () => {
+  speak(opt.r, { cat: 'talkCat', after: 'happy' }, () => {
     talk.step++;
     if (talk.step < talk.t.steps.length) {
       setTimeout(talkStep, 400);
     } else {
-      const id = talk.t.id;
-      P.talkStars[id] = (P.talkStars[id] || 0) + 1;
-      addStars(1); save();
-      celebrate('What a great talk!', 1, 'You talked with me in English! That makes me so happy! One star!',
-        () => { renderTalkMenu(); show('talkMenu', false); navStack.pop(); });
+      levelComplete(3, 'You talked with me in English! That makes me so happy! Meow!');
     }
   });
 }
 
-/* ================= STORY TIME ================= */
+/* ================= LEVEL: STORY ================= */
 let story = null;
-function renderStoryMenu() {
-  $('storyList').innerHTML = STORIES.map(s =>
-    menuItem(s.icon, s.color, s.title, s.jp, starRow(Math.min(P.storyStars[s.id] || 0, 3), 3))).join('');
-  $('storyList').querySelectorAll('.menu-item').forEach((b, i) => {
-    b.onclick = () => { sfx.tap(); startStory(STORIES[i]); };
-  });
-}
 function startStory(s) {
-  story = { s, page: -1 }; // -1 = title page
+  story = { s, page: -1, firstTry: true };
+  $('storyRead').classList.remove('hidden');
+  $('storyNext').classList.remove('hidden');
+  $('storyDots').style.gap = '';
   show('story');
   storyPage();
 }
@@ -618,7 +614,7 @@ function storyPage() {
   const s = story.s;
   sfx.page();
   if (story.page === -1) {
-    $('storyScene').innerHTML = sceneSVG({ bg: 'meadow', items: [{ momo: true, mood: 'happy', x: 110, y: 40, s: 0.7 }] });
+    $('storyScene').innerHTML = sceneSVG({ bg: 'meadow', items: [{ hero: true, mood: 'happy', x: 110, y: 40, s: 0.7 }] });
     $('storyText').innerHTML = `<span class="story-title-page">${s.title}</span>`;
     $('storyRead').innerHTML = btnIcon('speaker') + 'Read to me';
     $('storyNext').innerHTML = 'Open the book!';
@@ -647,7 +643,6 @@ function storyPage() {
 function readPage() {
   const pg = story.s.pages[story.page];
   const words = $('storyText').querySelectorAll('.story-word');
-  // light words roughly in time with speech
   const dur = pg.text.split(' ').length * 380;
   words.forEach((w, i) => {
     setTimeout(() => { w.classList.add('lit'); setTimeout(() => w.classList.remove('lit'), 380); }, i * (dur / words.length));
@@ -662,7 +657,7 @@ $('storyRead').onclick = () => {
 $('storyNext').onclick = () => { story.page++; storyPage(); };
 function storyQuiz() {
   const s = story.s;
-  $('storyScene').innerHTML = sceneSVG({ bg: 'meadow', items: [{ momo: true, mood: 'think', x: 110, y: 40, s: 0.7 }] });
+  $('storyScene').innerHTML = sceneSVG({ bg: 'meadow', items: [{ hero: true, mood: 'think', x: 110, y: 40, s: 0.7 }] });
   $('storyText').innerHTML = `<b>${s.quiz.q}</b>`;
   $('storyRead').classList.add('hidden');
   $('storyNext').classList.add('hidden');
@@ -671,15 +666,13 @@ function storyQuiz() {
   $('storyDots').style.gap = '14px';
   $('storyDots').querySelectorAll('.quiz-opt').forEach(b => {
     b.onclick = () => {
-      const restore = () => { $('storyRead').classList.remove('hidden'); $('storyNext').classList.remove('hidden'); $('storyDots').style.gap = ''; };
       if (b.dataset.ok === '1') {
         sfx.good(); b.classList.add('ok');
-        P.storyStars[s.id] = (P.storyStars[s.id] || 0) + 1;
-        addStars(1); save();
-        setTimeout(() => celebrate('You remembered the story!', 1, `Yes! ${s.quiz.opts.find(o => o.ok).t}! You listened so well! One star!`,
-          () => { restore(); renderStoryMenu(); show('storyMenu', false); navStack.pop(); }), 600);
+        setTimeout(() => levelComplete(story.firstTry ? 3 : 2,
+          `Yes! ${s.quiz.opts.find(o => o.ok).t}! You listened so well!`), 600);
       } else {
         sfx.bad(); b.classList.add('no');
+        story.firstTry = false;
         speak('Hmm, think again! You can do it!', {});
         setTimeout(() => b.classList.remove('no'), 700);
       }
@@ -691,20 +684,32 @@ function storyQuiz() {
 /* ================= STICKERS ================= */
 function renderStickers() {
   $('stickerGrid').innerHTML = STICKERS.map(s => {
-    const got = P.stars >= s.need;
+    const got = totalStars() >= s.need;
     return `<div class="sticker-cell${got ? '' : ' locked'}">
       ${iconSVG(s.icon)}
       <div class="sticker-name">${got ? s.name : '???'}</div>
       <div class="sticker-need">${iconSVG('star')} ${s.need} stars</div>
     </div>`;
   }).join('');
+  $('lvlLabel').innerHTML = 'Sticker Book<span>贴纸册</span>';
 }
 
 /* ---------------- boot ---------------- */
-renderHome();
-show('home');
-// unlock audio context on first touch
+$('starCount').innerHTML = starPillHTML();
+// keep the topbar pill fresh whenever the map re-renders
+const _renderMap = renderMap;
+renderMap = function () { _renderMap(); $('starCount').innerHTML = starPillHTML(); };
+
+renderMap();
+show('map');
 document.body.addEventListener('pointerdown', () => ac(), { once: true });
+
+/* tiny hook for automated testing */
+window.MQ = {
+  startLevel, levelComplete, levelFail, backToMap,
+  get state() { return P; },
+  get pop() { return pop; }, get quiz() { return quiz; },
+};
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
