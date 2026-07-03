@@ -422,73 +422,82 @@ function iconInBubble(name, bg) {
     <g transform="translate(14,14) scale(.72)">${body}</g></svg>`;
 }
 
-/* ---------- Momo the fox — the app's mascot ---------- */
+/* ---------- Mimi the cat — the game's hero ---------- */
 /* moods: idle | happy | cheer | talk | think | oops */
-function momoSVG(mood) {
+const CAT = { fur: '#9DB8CE', dark: '#7E9DB8', cream: '#FFF6E8', pink: '#F7B8C4', ink: '#33323F' };
+function catSVG(mood) {
   mood = mood || 'idle';
   const mouths = {
-    idle:  `<path d="M92 118 Q100 125 108 118" stroke="#4A2E12" stroke-width="3.6" fill="none" stroke-linecap="round"/>`,
-    happy: `<path d="M86 114 Q100 130 114 114 Z" fill="#7A3B2E"/><path d="M92 122 Q100 130 108 122 Z" fill="#E2707B"/>`,
-    cheer: `<path d="M84 112 Q100 134 116 112 Z" fill="#7A3B2E"/><path d="M90 122 Q100 132 110 122 Z" fill="#E2707B"/>`,
-    talk:  `<g class="mouth-a"><ellipse cx="100" cy="118" rx="10" ry="8" fill="#7A3B2E"/><ellipse cx="100" cy="121" rx="6" ry="4" fill="#E2707B"/></g>
-            <g class="mouth-b"><path d="M90 116 Q100 124 110 116" stroke="#4A2E12" stroke-width="4" fill="none" stroke-linecap="round"/></g>`,
-    think: `<path d="M94 120 Q100 117 106 120" stroke="#4A2E12" stroke-width="3.6" fill="none" stroke-linecap="round"/>`,
-    oops:  `<ellipse cx="100" cy="118" rx="6" ry="7" fill="#7A3B2E"/>`,
+    idle:  `<path d="M100 112 Q94 120 88 116 M100 112 Q106 120 112 116" stroke="${CAT.ink}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`,
+    happy: `<path d="M86 114 Q100 130 114 114 Z" fill="#8C4A5A"/><path d="M92 122 Q100 130 108 122 Z" fill="#F27E9B"/>`,
+    cheer: `<path d="M84 112 Q100 134 116 112 Z" fill="#8C4A5A"/><path d="M90 122 Q100 132 110 122 Z" fill="#F27E9B"/>`,
+    talk:  `<g class="mouth-a"><ellipse cx="100" cy="118" rx="10" ry="8" fill="#8C4A5A"/><ellipse cx="100" cy="121" rx="6" ry="4" fill="#F27E9B"/></g>
+            <g class="mouth-b"><path d="M100 112 Q94 120 88 116 M100 112 Q106 120 112 116" stroke="${CAT.ink}" stroke-width="3.6" fill="none" stroke-linecap="round"/></g>`,
+    think: `<path d="M94 118 Q100 115 106 118" stroke="${CAT.ink}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`,
+    oops:  `<ellipse cx="100" cy="116" rx="6" ry="7" fill="#8C4A5A"/>`,
   };
   const eyes = {
-    idle:  `<circle cx="80" cy="92" r="7" fill="#33261A"/><circle cx="120" cy="92" r="7" fill="#33261A"/>
-            <circle cx="82.5" cy="89.5" r="2.4" fill="#FFF"/><circle cx="122.5" cy="89.5" r="2.4" fill="#FFF"/>`,
-    happy: `<path d="M72 92 Q80 84 88 92" stroke="#33261A" stroke-width="5" fill="none" stroke-linecap="round"/>
-            <path d="M112 92 Q120 84 128 92" stroke="#33261A" stroke-width="5" fill="none" stroke-linecap="round"/>`,
-    cheer: `<path d="M72 92 Q80 82 88 92" stroke="#33261A" stroke-width="5" fill="none" stroke-linecap="round"/>
-            <path d="M112 92 Q120 82 128 92" stroke="#33261A" stroke-width="5" fill="none" stroke-linecap="round"/>`,
-    talk:  `<circle cx="80" cy="92" r="7" fill="#33261A"/><circle cx="120" cy="92" r="7" fill="#33261A"/>
-            <circle cx="82.5" cy="89.5" r="2.4" fill="#FFF"/><circle cx="122.5" cy="89.5" r="2.4" fill="#FFF"/>`,
-    think: `<circle cx="80" cy="90" r="6" fill="#33261A"/><circle cx="120" cy="90" r="6" fill="#33261A"/>
-            <path d="M68 78 Q78 72 88 76 M132 78 Q122 72 112 76" stroke="#D8752F" stroke-width="4" fill="none" stroke-linecap="round"/>`,
-    oops:  `<circle cx="80" cy="92" r="8" fill="#33261A"/><circle cx="120" cy="92" r="8" fill="#33261A"/>
-            <circle cx="83" cy="89" r="3" fill="#FFF"/><circle cx="123" cy="89" r="3" fill="#FFF"/>`,
+    idle:  `<circle cx="80" cy="88" r="7" fill="${CAT.ink}"/><circle cx="120" cy="88" r="7" fill="${CAT.ink}"/>
+            <circle cx="82.5" cy="85.5" r="2.4" fill="#FFF"/><circle cx="122.5" cy="85.5" r="2.4" fill="#FFF"/>`,
+    happy: `<path d="M72 88 Q80 80 88 88" stroke="${CAT.ink}" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M112 88 Q120 80 128 88" stroke="${CAT.ink}" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+    cheer: `<path d="M72 88 Q80 78 88 88" stroke="${CAT.ink}" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M112 88 Q120 78 128 88" stroke="${CAT.ink}" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+    talk:  `<circle cx="80" cy="88" r="7" fill="${CAT.ink}"/><circle cx="120" cy="88" r="7" fill="${CAT.ink}"/>
+            <circle cx="82.5" cy="85.5" r="2.4" fill="#FFF"/><circle cx="122.5" cy="85.5" r="2.4" fill="#FFF"/>`,
+    think: `<circle cx="80" cy="86" r="6" fill="${CAT.ink}"/><circle cx="120" cy="86" r="6" fill="${CAT.ink}"/>
+            <path d="M68 74 Q78 68 88 72 M132 74 Q122 68 112 72" stroke="${CAT.dark}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    oops:  `<circle cx="80" cy="88" r="8" fill="${CAT.ink}"/><circle cx="120" cy="88" r="8" fill="${CAT.ink}"/>
+            <circle cx="83" cy="85" r="3" fill="#FFF"/><circle cx="123" cy="85" r="3" fill="#FFF"/>`,
   };
   const cheerArms = mood === 'cheer' ? `
-    <g class="m-armL"><ellipse cx="52" cy="120" rx="10" ry="20" fill="#FF8A3D" transform="rotate(35 52 120)"/>
-      <circle cx="42" cy="104" r="9" fill="#FFF4E8"/></g>
-    <g class="m-armR"><ellipse cx="148" cy="120" rx="10" ry="20" fill="#FF8A3D" transform="rotate(-35 148 120)"/>
-      <circle cx="158" cy="104" r="9" fill="#FFF4E8"/></g>
+    <g class="m-armL"><ellipse cx="52" cy="120" rx="10" ry="20" fill="${CAT.fur}" transform="rotate(35 52 120)"/>
+      <circle cx="42" cy="104" r="9" fill="${CAT.cream}"/></g>
+    <g class="m-armR"><ellipse cx="148" cy="120" rx="10" ry="20" fill="${CAT.fur}" transform="rotate(-35 148 120)"/>
+      <circle cx="158" cy="104" r="9" fill="${CAT.cream}"/></g>
     <g fill="#FFC93C">
       <path d="M30 60 l4 9 9 1 -7 6 2 9 -8 -5 -8 5 2 -9 -7 -6 9 -1 Z"/>
       <path d="M164 54 l4 9 9 1 -7 6 2 9 -8 -5 -8 5 2 -9 -7 -6 9 -1 Z"/>
       <path d="M172 120 l3 7 7 1 -5 5 1 7 -6 -4 -6 4 1 -7 -5 -5 7 -1 Z"/>
     </g>` : '';
   const thinkPaw = mood === 'think' ? `
-    <circle cx="128" cy="128" r="10" fill="#FFF4E8" stroke="#F0C9A0" stroke-width="2"/>
+    <circle cx="128" cy="126" r="10" fill="${CAT.cream}" stroke="${CAT.dark}" stroke-width="2"/>
     <circle cx="164" cy="58" r="4" fill="#B9C7D4"/><circle cx="174" cy="44" r="6" fill="#B9C7D4"/>` : '';
 
-  return `<svg class="momo mood-${mood}" viewBox="0 0 200 200" aria-label="Momo the fox">
+  return `<svg class="hero mood-${mood}" viewBox="0 0 200 200" aria-label="Mimi the cat">
     <g class="m-tail">
-      <path d="M138 152 Q192 148 188 100 Q185 76 164 70 Q176 102 146 122 Z" fill="#FF8A3D"/>
-      <path d="M164 70 Q176 102 146 122 L142 138 Q186 120 181 82 Z" fill="#FFF4E8"/>
+      <path d="M140 158 Q186 156 184 112 Q183 94 170 88 Q178 116 148 132 Z" fill="${CAT.fur}"/>
+      <path d="M170 88 Q178 100 174 112 L158 106 Q168 98 170 88 Z" fill="${CAT.dark}"/>
+      <path d="M164 124 Q158 132 148 134 L150 122 Q158 122 164 124 Z" fill="${CAT.dark}"/>
     </g>
-    <ellipse cx="100" cy="158" rx="46" ry="34" fill="#FF8A3D"/>
-    <ellipse cx="100" cy="164" rx="28" ry="24" fill="#FFF4E8"/>
+    <ellipse cx="100" cy="158" rx="46" ry="34" fill="${CAT.fur}"/>
+    <ellipse cx="100" cy="164" rx="28" ry="24" fill="${CAT.cream}"/>
     ${cheerArms}
-    <ellipse cx="76" cy="188" rx="13" ry="8" fill="#E8742B"/>
-    <ellipse cx="124" cy="188" rx="13" ry="8" fill="#E8742B"/>
+    <ellipse cx="76" cy="188" rx="13" ry="8" fill="${CAT.dark}"/>
+    <ellipse cx="124" cy="188" rx="13" ry="8" fill="${CAT.dark}"/>
     <g class="m-head">
-      <path d="M58 62 L42 14 L86 40 Z" fill="#FF8A3D"/>
-      <path d="M142 62 L158 14 L114 40 Z" fill="#FF8A3D"/>
-      <path d="M59 56 L49 24 L78 42 Z" fill="#5D3A22"/>
-      <path d="M141 56 L151 24 L122 42 Z" fill="#5D3A22"/>
-      <circle cx="100" cy="92" r="52" fill="#FF8A3D"/>
-      <path d="M60 104 Q66 138 100 138 Q134 138 140 104 Q122 124 100 124 Q78 124 60 104 Z" fill="#FFF4E8"/>
-      <ellipse cx="64" cy="106" rx="9" ry="6" fill="#FBB1A0" opacity=".8"/>
-      <ellipse cx="136" cy="106" rx="9" ry="6" fill="#FBB1A0" opacity=".8"/>
+      <path d="M56 64 L46 14 L94 34 Z" fill="${CAT.fur}"/>
+      <path d="M144 64 L154 14 L106 34 Z" fill="${CAT.fur}"/>
+      <path d="M60 54 L54 24 L84 37 Z" fill="${CAT.pink}"/>
+      <path d="M140 54 L146 24 L116 37 Z" fill="${CAT.pink}"/>
+      <circle cx="100" cy="90" r="52" fill="${CAT.fur}"/>
+      <path d="M88 42 L90 54 M100 40 L100 53 M112 42 L110 54" stroke="${CAT.dark}" stroke-width="5" stroke-linecap="round"/>
+      <path d="M60 102 Q66 136 100 136 Q134 136 140 102 Q122 122 100 122 Q78 122 60 102 Z" fill="${CAT.cream}"/>
+      <ellipse cx="64" cy="102" rx="9" ry="6" fill="#F9C2CC" opacity=".85"/>
+      <ellipse cx="136" cy="102" rx="9" ry="6" fill="#F9C2CC" opacity=".85"/>
       <g class="m-eyes">${eyes[mood] || eyes.idle}</g>
-      <ellipse cx="100" cy="106" rx="7" ry="5.4" fill="#4A2E12"/>
+      <path d="M93 102 L107 102 L100 111 Z" fill="#F27E9B"/>
+      <g stroke="${CAT.dark}" stroke-width="2.6" stroke-linecap="round">
+        <line x1="34" y1="98" x2="60" y2="102"/><line x1="34" y1="110" x2="60" y2="110"/>
+        <line x1="166" y1="98" x2="140" y2="102"/><line x1="166" y1="110" x2="140" y2="110"/>
+      </g>
       <g class="m-mouth">${mouths[mood] || mouths.idle}</g>
     </g>
     ${thinkPaw}
   </svg>`;
 }
+/* legacy alias so any old call sites keep working */
+const momoSVG = catSVG;
 
 /* ---------- Story scene backgrounds ---------- */
 const SCENE_BG = {
@@ -533,10 +542,10 @@ function sceneSVG(scene) {
   const bg = SCENE_BG[scene.bg] || SCENE_BG.meadow;
   let items = '';
   (scene.items || []).forEach(it => {
-    if (it.momo) {
+    if (it.hero || it.momo) {
       const s = it.s || 0.55;
       items += `<g transform="translate(${it.x},${it.y}) scale(${s})">${
-        momoSVG(it.mood || 'happy').replace(/<\/?svg[^>]*>/g, '')}</g>`;
+        catSVG(it.mood || 'happy').replace(/<\/?svg[^>]*>/g, '')}</g>`;
     } else {
       const body = ICONS[it.icon] || ICONS.star;
       const s = it.s || 0.7;

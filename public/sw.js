@@ -1,4 +1,4 @@
-const CACHE = 'eiko-prep-v2';
+const CACHE = 'eiko-prep-v3';
 const ASSETS = [
   '/', '/index.html', '/manifest.json',
   '/phonics/', '/phonics/index.html', '/phonics/style.css',

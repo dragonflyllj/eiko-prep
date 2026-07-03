@@ -1,4 +1,4 @@
-/* Momo's Phonics Adventure — learning content */
+/* Mimi's Phonics Quest — learning content + level map */
 
 /* ---------- Phonics: letters in teaching order (SATPIN-style sets) ---------- */
 const LETTER_SETS = [
@@ -61,21 +61,21 @@ const RHYME_ICONS = {
 };
 
 /* ---------- Talk Time: guided daily conversations ---------- */
-/* Momo speaks, the child picks an answer, says it out loud, Momo reacts. */
+/* Mimi speaks, the child picks an answer, says it out loud, Mimi reacts. */
 const TALKS = [
   {
-    id: 'hello', title: 'Saying Hello', jp: 'あいさつ', icon: 'wave', color: '#FF9F43',
+    id: 'hello', title: 'Saying Hello', sub: '打招呼', icon: 'wave', color: '#FF9F43',
     steps: [
-      { m: 'Hello, hello! I am Momo the fox! Who are you?',
+      { m: 'Hello, hello! I am Mimi the cat! Who are you?',
         opts: [
-          { t: 'Hello, Momo! I am me!', r: 'Ha ha! Nice to meet you, my new friend!' },
-          { t: 'Hi, Momo!', r: 'Hi, hi! I am so happy to see you!' },
+          { t: 'Hello, Mimi! I am me!', r: 'Ha ha! Nice to meet you, my new friend!' },
+          { t: 'Hi, Mimi!', r: 'Hi, hi! I am so happy to see you!' },
         ] },
       { m: 'How are you today?',
         opts: [
           { t: 'I am good!', r: 'Yay! I am good too. High five!' },
           { t: 'I am great!', r: 'Wow, great is the BEST! Me too!' },
-          { t: 'I am sleepy.', r: 'Sleepy? Let us do a big stretch! Whoooo!' },
+          { t: 'I am sleepy.', r: 'Sleepy? Cats love naps! But first, a big stretch! Whoooo!' },
         ] },
       { m: 'When we meet in the morning, we say... Good morning! Can you say it?',
         opts: [
@@ -83,17 +83,17 @@ const TALKS = [
         ] },
       { m: 'And when we go to sleep, we say... Good night!',
         opts: [
-          { t: 'Good night, Momo!', r: 'Good night! But wait, do not sleep yet! Ha ha!' },
+          { t: 'Good night, Mimi!', r: 'Good night! But wait, do not sleep yet! Ha ha!' },
         ] },
       { m: 'Time to go! What do we say when we leave?',
         opts: [
-          { t: 'Goodbye, Momo!', r: 'Goodbye, friend! See you soon!' },
+          { t: 'Goodbye, Mimi!', r: 'Goodbye, friend! See you soon!' },
           { t: 'See you later!', r: 'See you later, alligator! That is a funny one!' },
         ] },
     ],
   },
   {
-    id: 'feelings', title: 'How I Feel', jp: 'きもち', icon: 'heart', color: '#E85D75',
+    id: 'feelings', title: 'How I Feel', sub: '我的心情', icon: 'heart', color: '#E85D75',
     steps: [
       { m: 'Look at my face! I am smiling! I feel HAPPY. How do you feel?',
         opts: [
@@ -113,7 +113,7 @@ const TALKS = [
       { m: 'When my tummy makes a rumble sound, I feel hungry! Are you hungry?',
         opts: [
           { t: 'Yes, I am hungry!', r: 'Then let us find a yummy snack after this!' },
-          { t: 'No, I am full!', r: 'Full tummy, happy fox! I mean... happy YOU!' },
+          { t: 'No, I am full!', r: 'Full tummy, happy cat! I mean... happy YOU!' },
         ] },
       { m: 'You did it! Talking about feelings makes us strong. How do you feel NOW?',
         opts: [
@@ -123,13 +123,13 @@ const TALKS = [
     ],
   },
   {
-    id: 'food', title: 'Yummy Food', jp: 'たべもの', icon: 'cake', color: '#F48FB1',
+    id: 'food', title: 'Yummy Food', sub: '好吃的', icon: 'cake', color: '#F48FB1',
     steps: [
-      { m: 'My tummy is rumbling! I like apples. Crunch, crunch! What do you like?',
+      { m: 'My tummy is rumbling! I like fish. Yum, yum! What do you like?',
         opts: [
-          { t: 'I like apples too!', r: 'Apple friends! Crunch, crunch, yum!' },
+          { t: 'I like fish too!', r: 'Fish friends! Cats LOVE fish! Yum!' },
           { t: 'I like cake!', r: 'Cake! Sweet and soft! Save a bite for me!' },
-          { t: 'I like fish!', r: 'A fish fan! Foxes love fish too. Yum!' },
+          { t: 'I like apples!', r: 'Apples! Crunch, crunch! So healthy!' },
         ] },
       { m: 'Do you want some grapes? Say: Yes, please!',
         opts: [
@@ -137,7 +137,7 @@ const TALKS = [
         ] },
       { m: 'Here are your grapes! What do we say?',
         opts: [
-          { t: 'Thank you, Momo!', r: 'You are welcome! Such good manners!' },
+          { t: 'Thank you, Mimi!', r: 'You are welcome! Such good manners!' },
         ] },
       { m: 'Blah! I do not like mud pie! If you do not want food, say: No, thank you.',
         opts: [
@@ -151,7 +151,7 @@ const TALKS = [
     ],
   },
   {
-    id: 'family', title: 'My Family', jp: 'かぞく', icon: 'house', color: '#5FBB4E',
+    id: 'family', title: 'My Family', sub: '我的家人', icon: 'house', color: '#5FBB4E',
     steps: [
       { m: 'This is my home! Who lives in your home?',
         opts: [
@@ -179,7 +179,7 @@ const TALKS = [
     ],
   },
   {
-    id: 'school', title: 'At School', jp: 'がっこう', icon: 'book', color: '#7C6CF6',
+    id: 'school', title: 'At School', sub: '在学校', icon: 'book', color: '#7C6CF6',
     steps: [
       { m: 'Time for school! I put my book in my bag. What do you put in your bag?',
         opts: [
@@ -206,7 +206,7 @@ const TALKS = [
     ],
   },
   {
-    id: 'weather', title: 'The Weather', jp: 'てんき', icon: 'cloud', color: '#4A90D9',
+    id: 'weather', title: 'The Weather', sub: '天气', icon: 'cloud', color: '#4A90D9',
     steps: [
       { m: 'Look outside! The sun is out! It is sunny! Can you say it?',
         opts: [
@@ -236,7 +236,7 @@ const TALKS = [
 /* ---------- Story Time: decodable stories with scenes ---------- */
 const STORIES = [
   {
-    id: 'redhat', title: 'The Red Hat', jp: 'あかいぼうし', icon: 'hat', color: '#E8483F',
+    id: 'redhat', title: 'The Red Hat', sub: '红帽子', icon: 'hat', color: '#E8483F',
     pages: [
       { text: 'A cat has a red hat.',
         scene: { bg: 'meadow', items: [
@@ -263,33 +263,33 @@ const STORIES = [
       { icon: 'hen', t: 'the hen', ok: true }, { icon: 'dog', t: 'the dog' } ] },
   },
   {
-    id: 'bigegg', title: 'The Big Egg', jp: 'おおきなたまご', icon: 'egg', color: '#F5A623',
+    id: 'bigegg', title: 'The Big Egg', sub: '大鸡蛋', icon: 'egg', color: '#F5A623',
     pages: [
-      { text: 'Momo finds a big, big egg.',
+      { text: 'Mimi finds a big, big egg.',
         scene: { bg: 'meadow', items: [
-          { momo: true, mood: 'think', x: 30, y: 55, s: 0.62 }, { icon: 'egg', x: 180, y: 90, s: 0.95 } ] } },
+          { hero: true, mood: 'think', x: 30, y: 55, s: 0.62 }, { icon: 'egg', x: 180, y: 90, s: 0.95 } ] } },
       { text: 'Tap, tap! The egg wiggles!',
         scene: { bg: 'meadow', items: [
-          { momo: true, mood: 'oops', x: 30, y: 55, s: 0.62 }, { icon: 'egg', x: 180, y: 90, s: 0.95, r: 12 } ] } },
+          { hero: true, mood: 'oops', x: 30, y: 55, s: 0.62 }, { icon: 'egg', x: 180, y: 90, s: 0.95, r: 12 } ] } },
       { text: 'CRACK! What is in the egg?',
         scene: { bg: 'meadow', items: [
-          { momo: true, mood: 'oops', x: 30, y: 55, s: 0.62 }, { icon: 'egg', x: 180, y: 90, s: 0.95, r: -14 } ] } },
+          { hero: true, mood: 'oops', x: 30, y: 55, s: 0.62 }, { icon: 'egg', x: 180, y: 90, s: 0.95, r: -14 } ] } },
       { text: 'A little chick! PEEP! The peep is very BIG!',
         scene: { bg: 'meadow', items: [
-          { momo: true, mood: 'oops', x: 30, y: 55, s: 0.62 }, { icon: 'chick', x: 185, y: 95, s: 0.85 } ] } },
-      { text: 'The big peep makes Momo jump! Whoa!',
+          { hero: true, mood: 'oops', x: 30, y: 55, s: 0.62 }, { icon: 'chick', x: 185, y: 95, s: 0.85 } ] } },
+      { text: 'The big peep makes Mimi jump! Whoa!',
         scene: { bg: 'sky', items: [
-          { momo: true, mood: 'oops', x: 90, y: 25, s: 0.6 }, { icon: 'chick', x: 190, y: 120, s: 0.8 } ] } },
-      { text: 'Momo and the chick are best friends now. Peep, peep!',
+          { hero: true, mood: 'oops', x: 90, y: 25, s: 0.6 }, { icon: 'chick', x: 190, y: 120, s: 0.8 } ] } },
+      { text: 'Mimi and the chick are best friends now. Peep, peep!',
         scene: { bg: 'meadow', items: [
-          { momo: true, mood: 'cheer', x: 40, y: 50, s: 0.65 }, { icon: 'chick', x: 190, y: 100, s: 0.8 },
+          { hero: true, mood: 'cheer', x: 40, y: 50, s: 0.65 }, { icon: 'chick', x: 190, y: 100, s: 0.8 },
           { icon: 'heart', x: 140, y: 40, s: 0.5 } ] } },
     ],
     quiz: { q: 'What was in the egg?', opts: [
       { icon: 'chick', t: 'a chick', ok: true }, { icon: 'fox', t: 'a fox' } ] },
   },
   {
-    id: 'funbus', title: 'The Fun Bus', jp: 'たのしいバス', icon: 'bus', color: '#FFC93C',
+    id: 'funbus', title: 'The Fun Bus', sub: '欢乐巴士', icon: 'bus', color: '#FFC93C',
     pages: [
       { text: 'Here comes the fun bus! Beep, beep!',
         scene: { bg: 'road', items: [ { icon: 'bus', x: 100, y: 70, s: 1.2 } ] } },
@@ -315,20 +315,45 @@ const STORIES = [
   },
 ];
 
-/* ---------- Stickers: rewards for stars ---------- */
-const STICKERS = [
-  { need: 3,  icon: 'ball',    name: 'Bouncy Ball' },
-  { need: 8,  icon: 'rainbow', name: 'Rainbow' },
-  { need: 14, icon: 'octopus', name: 'Dancing Octopus' },
-  { need: 20, icon: 'kite',    name: 'Flying Kite' },
-  { need: 28, icon: 'trophy',  name: 'Gold Trophy' },
-  { need: 38, icon: 'crown',   name: 'Super Star Crown' },
+/* ---------- The Quest: 22 levels along the adventure path ----------
+   type: letters | pop | build | rhyme | quiz | story | talk
+   Pass rules live in app.js; boss levels are quiz checkpoints. */
+const LEVELS = [
+  { type: 'letters', set: 0, name: 'First Sounds',   sub: '字母发音 1', icon: 'speaker' },
+  { type: 'pop',                name: 'Sound Pop',     sub: '泡泡游戏',   icon: 'balloon' },
+  { type: 'letters', set: 1, name: 'More Sounds',   sub: '字母发音 2', icon: 'speaker' },
+  { type: 'build',              name: 'Word Builder',  sub: '拼单词',     icon: 'box' },
+  { type: 'rhyme',              name: 'Rhyme Match',   sub: '押韵配对',   icon: 'heart' },
+  { type: 'letters', set: 2, name: 'New Sounds',    sub: '字母发音 3', icon: 'speaker' },
+  { type: 'pop',                name: 'Sound Pop 2',   sub: '泡泡游戏 2', icon: 'balloon' },
+  { type: 'quiz', pass: 6,   name: 'BOSS: Big Quiz', sub: '第一个大考验!', icon: 'trophy', boss: true },
+  { type: 'story', id: 'redhat',  name: 'The Red Hat',  sub: '故事: 红帽子', icon: 'hat' },
+  { type: 'talk',  id: 'hello',   name: 'Saying Hello', sub: '会话: 打招呼', icon: 'wave' },
+  { type: 'letters', set: 3, name: 'Super Sounds',  sub: '字母发音 4', icon: 'speaker' },
+  { type: 'build',              name: 'Word Builder 2', sub: '拼单词 2',  icon: 'box' },
+  { type: 'talk',  id: 'feelings', name: 'How I Feel',  sub: '会话: 心情', icon: 'heart' },
+  { type: 'story', id: 'bigegg',  name: 'The Big Egg',  sub: '故事: 大鸡蛋', icon: 'egg' },
+  { type: 'letters', set: 4, name: 'Last Sounds',   sub: '字母发音 5', icon: 'speaker' },
+  { type: 'rhyme',              name: 'Rhyme Match 2', sub: '押韵配对 2', icon: 'heart' },
+  { type: 'talk',  id: 'food',    name: 'Yummy Food',   sub: '会话: 好吃的', icon: 'cake' },
+  { type: 'talk',  id: 'family',  name: 'My Family',    sub: '会话: 家人', icon: 'house' },
+  { type: 'story', id: 'funbus',  name: 'The Fun Bus',  sub: '故事: 欢乐巴士', icon: 'bus' },
+  { type: 'talk',  id: 'school',  name: 'At School',    sub: '会话: 在学校', icon: 'book' },
+  { type: 'talk',  id: 'weather', name: 'The Weather',  sub: '会话: 天气', icon: 'cloud' },
+  { type: 'quiz', pass: 8,   name: 'FINAL BOSS!',   sub: '最终大考验!', icon: 'crown', boss: true },
 ];
 
-/* Stars needed to unlock Talk Time (phonics first!) */
-const TALK_UNLOCK = 8;
+/* ---------- Stickers: rewards for total stars (max 66) ---------- */
+const STICKERS = [
+  { need: 5,  icon: 'ball',    name: 'Bouncy Ball' },
+  { need: 12, icon: 'rainbow', name: 'Rainbow' },
+  { need: 20, icon: 'octopus', name: 'Dancing Octopus' },
+  { need: 30, icon: 'kite',    name: 'Flying Kite' },
+  { need: 42, icon: 'trophy',  name: 'Gold Trophy' },
+  { need: 56, icon: 'crown',   name: 'Super Star Crown' },
+];
 
-/* Momo's encouragement lines */
+/* Mimi's encouragement lines */
 const PRAISE = [
   'Yay! You did it!', 'Wonderful!', 'Super duper!', 'You are amazing!',
   'Great job!', 'Fantastic!', 'Wow, so smart!', 'High five!',
