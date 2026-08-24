@@ -1,8 +1,10 @@
-const CACHE = 'eiko-prep-v3';
+const CACHE = 'eiko-prep-v4';
 const ASSETS = [
   '/', '/index.html', '/manifest.json',
   '/phonics/', '/phonics/index.html', '/phonics/style.css',
   '/phonics/art.js', '/phonics/data.js', '/phonics/app.js',
+  '/daily/', '/daily/index.html', '/daily/style.css',
+  '/daily/data.js', '/daily/app.js',
 ];
 
 self.addEventListener('install', e => {
