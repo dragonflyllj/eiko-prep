@@ -20,20 +20,28 @@
 
 <main>
 
-  <!-- WEEK VIEW -->
-  <section id="week" class="screen active">
+  <!-- UNIT PICKER (home) -->
+  <section id="units" class="screen active">
     <div class="wk-head">
-      <div id="wkCat" class="cat-mini"></div>
+      <div id="uCat" class="cat-mini"></div>
       <div>
         <h1 class="app-title">Mimi's Week</h1>
         <p class="app-sub">每天五页,听说读写</p>
       </div>
     </div>
-    <div id="streakBar" class="streak-bar"></div>
+    <div id="uStreak" class="streak-bar"></div>
+    <div id="uBubble" class="bubble"></div>
+    <p class="tip">选一个练习单元 · Pick a unit</p>
+    <div id="unitList" class="unit-list"></div>
+    <div id="uBadges" class="badge-row"></div>
+    <a class="exit-link" href="/">&larr; Eik&#333; Prep home</a>
+  </section>
+
+  <!-- LESSON LIST -->
+  <section id="week" class="screen">
+    <div id="wkHero" class="unit-hero"></div>
     <div id="wkBubble" class="bubble"></div>
     <div id="weekList" class="week-list"></div>
-    <div id="badgeRow" class="badge-row"></div>
-    <a class="exit-link" href="/">&larr; Eik&#333; Prep home</a>
   </section>
 
   <!-- DAY MENU: the 5 pages -->
@@ -80,6 +88,23 @@
     <button id="listenBtn" class="listen-btn"></button>
     <div id="listenGrid" class="listen-grid"></div>
     <div id="listenSteps" class="mini-dots"></div>
+  </section>
+
+  <!-- PAGE: BUILD (chunk tiles) -->
+  <section id="pBuild" class="screen">
+    <p class="tip">每个星期都以 <b>-day</b> 结尾!把它拼起来 · Build the day!</p>
+    <div id="buildPic" class="spell-pic"></div>
+    <div id="buildSlots" class="chunk-slots"></div>
+    <div id="buildTiles" class="chunk-tiles"></div>
+    <div id="buildSteps" class="mini-dots"></div>
+  </section>
+
+  <!-- PAGE: ORDER (sequence the days) -->
+  <section id="pOrder" class="screen">
+    <p class="tip" id="orderTip"></p>
+    <div id="orderSlots" class="order-slots"></div>
+    <div id="orderBank" class="order-bank"></div>
+    <button id="orderHint" class="btn btn-blue"></button>
   </section>
 
   <!-- PAGE 5: SPEAK -->

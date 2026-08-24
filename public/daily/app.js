@@ -5,7 +5,9 @@
 const $ = id => document.getElementById(id);
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const pick = a => a[Math.floor(Math.random() * a.length)];
-const wIcon = w => w.color ? colorSVG(w.color) : iconSVG(w.icon);
+const wIcon = w => w.day !== undefined
+  ? dayCardSVG(DAY_INFO[w.day].short, w.day, DAY_INFO[w.day].color)
+  : (w.color ? colorSVG(w.color) : iconSVG(w.icon));
 const btnIcon = n => iconInBubble(n, '#FFFFFF');
 
 /* ---------------- dates & storage ---------------- */
@@ -23,11 +25,35 @@ function todayIdx() { return (new Date().getDay() + 6) % 7; }  // 0 = Monday
 const SAVE_KEY = 'mimi-week-v1';
 let P = { week: '', pages: {}, stamps: {}, streak: 0, best: 0, lastDone: '', totalDays: 0 };
 try { Object.assign(P, JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) {}
+/* migrate v1 keys (bare lesson id) into the unit-scoped form */
+Object.keys(P.pages).forEach(k => {
+  if (k.indexOf(':') === -1) { P.pages['words:' + k] = P.pages[k]; delete P.pages[k]; }
+});
 let freshWeek = false;
-if (P.week !== weekKey()) { P.week = weekKey(); P.pages = {}; P.stamps = {}; freshWeek = true; save(); }
+if (P.week !== weekKey()) {
+  P.week = weekKey();
+  // only the weekly unit restarts each Monday; study units keep their progress
+  Object.keys(P.pages).forEach(k => { if (k.slice(0, 6) === 'words:') delete P.pages[k]; });
+  P.stamps = {};
+  freshWeek = true;
+  save();
+}
 function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(P)); } catch (e) {} }
-function pagesOf(id) { return P.pages[id] || (P.pages[id] = [0, 0, 0, 0, 0]); }
-function dayDone(id) { return pagesOf(id).every(x => x); }
+function pageCount(lesson) { return (lesson.pages || ['look', 'trace', 'spell', 'listen', 'speak']).length; }
+function kindsOf(lesson) {
+  return (lesson.pages || ['look', 'trace', 'spell', 'listen', 'speak']).map(id => KIND(id));
+}
+function keyOf(unit, lesson) { return unit.id + ':' + lesson.id; }
+function pagesOf(unit, lesson) {
+  const k = keyOf(unit, lesson);
+  if (!P.pages[k] || P.pages[k].length !== pageCount(lesson)) {
+    const old = P.pages[k] || [];
+    P.pages[k] = Array.from({ length: pageCount(lesson) }, (_, i) => old[i] || 0);
+  }
+  return P.pages[k];
+}
+function lessonDone(unit, lesson) { return pagesOf(unit, lesson).every(x => x); }
+function unitDone(u) { return u.lessons.filter(l => lessonDone(u, l)).length; }
 
 /* ---------------- speech ---------------- */
 const synth = window.speechSynthesis;
@@ -104,88 +130,119 @@ function confetti() {
 }
 
 /* ---------------- navigation ---------------- */
-let curDay = null, curPage = 0;
+let curUnit = null, curDay = null, curPage = 0;
+const PAGE_SCREENS = ['pLook', 'pTrace', 'pSpell', 'pListen', 'pSpeak', 'pBuild', 'pOrder'];
 function show(id) {
   stopSay();
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   $(id).classList.add('active');
-  $('topbar').classList.toggle('hidden', id === 'week');
+  $('topbar').classList.toggle('hidden', id === 'units');
   window.scrollTo(0, 0);
 }
 $('backBtn').innerHTML = '<svg viewBox="0 0 100 100"><path d="M62 20 L30 50 L62 80" stroke="#7E9DB8" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 $('backBtn').onclick = () => {
   sfx.tap();
-  const onPage = ['pLook', 'pTrace', 'pSpell', 'pListen', 'pSpeak'].some(id => $(id).classList.contains('active'));
-  if (onPage) { openDay(curDay); } else { renderWeek(); show('week'); }
+  if (PAGE_SCREENS.some(id => $(id).classList.contains('active'))) openDay(curDay);
+  else if ($('day').classList.contains('active')) { renderWeek(); show('week'); }
+  else { renderUnits(); show('units'); }
 };
 
 function setTopbar() {
-  const k = PAGE_KINDS[curPage];
-  $('pageLabel').innerHTML = `${k.cn} · ${k.name}<span>${curDay.cn} ${curDay.themeCn} · 第 ${curPage + 1} / 5 页</span>`;
-  const done = pagesOf(curDay.id);
-  $('pageDots').innerHTML = PAGE_KINDS.map((_, i) =>
-    `<i class="${i === curPage ? 'on' : (done[i] ? 'done' : '')}"></i>`).join('');
+  const k = kindsOf(curDay)[curPage], n = pageCount(curDay);
+  $('pageLabel').innerHTML = `${k.cn} · ${k.name}<span>${curDay.cn} ${curDay.themeCn} · 第 ${curPage + 1} / ${n} 页</span>`;
+  const done = pagesOf(curUnit, curDay);
+  $('pageDots').innerHTML = done.map((d, i) =>
+    `<i class="${i === curPage ? 'on' : (d ? 'done' : '')}"></i>`).join('');
 }
 
-/* ================= WEEK VIEW ================= */
-function renderWeek() {
-  $('wkCat').innerHTML = catSVG('happy');
-  const ti = todayIdx();
-  const doneCount = WEEK.filter(d => dayDone(d.id)).length;
-
-  $('streakBar').innerHTML =
-    `${iconSVG('trophy')}<div><div class="sb-num">${P.streak} 天</div>
+/* ================= UNIT PICKER ================= */
+function streakHTML(rightNum, rightTxt) {
+  return `${iconSVG('trophy')}<div><div class="sb-num">${P.streak} 天</div>
       <div class="sb-txt">连续打卡 · best ${P.best}</div></div>
      <div style="width:1px;height:34px;background:#E3ECF3"></div>
-     <div><div class="sb-num" style="color:var(--green)">${doneCount}/7</div>
-      <div class="sb-txt">本周完成</div></div>`;
-
-  const today = WEEK[ti];
-  $('wkBubble').innerHTML = doneCount === 7
-    ? '这一周全部完成啦!你太棒了!'
-    : dayDone(today.id)
-      ? `今天的练习完成啦!明天见!`
-      : freshWeek && doneCount === 0
-        ? `新的一周开始啦!今天是${today.cn},我们练${today.themeCn}!`
-        : `今天是${today.cn} · 主题:${today.themeCn}。一起来练五页吧!`;
-
-  $('weekList').innerHTML = WEEK.map((d, i) => {
-    const pg = pagesOf(d.id), n = pg.filter(x => x).length, done = n === 5;
-    return `<button class="day-card${i === ti ? ' today' : ''}${done ? ' done' : ''}" data-i="${i}" style="--c:${d.color}">
-      ${i === ti ? '<span class="dc-badge">今天 TODAY</span>' : ''}
-      ${iconInBubble(d.icon, d.color + '22')}
-      <div class="dc-info">
-        <div class="dc-day">${d.en}<em>${d.cn}</em></div>
-        <div class="dc-theme">${d.theme} · ${d.themeCn} · ${n}/5 页</div>
-        <div class="dc-prog">${pg.map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</div>
+     <div><div class="sb-num" style="color:var(--green)">${rightNum}</div>
+      <div class="sb-txt">${rightTxt}</div></div>`;
+}
+function renderUnits() {
+  $('uCat').innerHTML = catSVG('happy');
+  const total = UNITS.reduce((a, u) => a + unitDone(u), 0);
+  const all = UNITS.reduce((a, u) => a + u.lessons.length, 0);
+  $('uStreak').innerHTML = streakHTML(`${total}/${all}`, '完成的课');
+  const todayLesson = UNITS[0].lessons[todayIdx()];
+  $('uBubble').textContent = lessonDone(UNITS[0], todayLesson)
+    ? '今天的主题词汇已经练完啦!要不要再练一课星期?'
+    : `今天是${todayLesson.cn}。选一个单元开始吧!`;
+  $('unitList').innerHTML = UNITS.map((u, i) => {
+    const d = unitDone(u), n = u.lessons.length;
+    return `<button class="unit-card" data-i="${i}" style="--c:${u.color}">
+      ${iconInBubble(u.icon, u.color + '22')}
+      <div class="uc-info">
+        <div class="uc-name">${u.cn} <em>${u.name}</em></div>
+        <div class="uc-sub">${u.sub}</div>
+        <div class="uc-bar"><i style="width:${d / n * 100}%"></i></div>
       </div>
-      ${done ? `<svg class="dc-stamp" viewBox="0 0 100 100">${ICONS.check}</svg>` : ''}
+      <div class="uc-n">${d}/${n}${d === n ? `<span>${iconSVG('check')}</span>` : ''}</div>
     </button>`;
   }).join('');
-  $('weekList').querySelectorAll('.day-card').forEach(b => {
-    b.onclick = () => { sfx.tap(); openDay(WEEK[+b.dataset.i]); };
+  $('unitList').querySelectorAll('.unit-card').forEach(b => {
+    b.onclick = () => { sfx.tap(); curUnit = UNITS[+b.dataset.i]; renderWeek(); show('week'); };
   });
-
-  $('badgeRow').innerHTML = STREAK_BADGES.map(b => {
+  $('uBadges').innerHTML = STREAK_BADGES.map(b => {
     const got = P.best >= b.need;
     return `<div class="badge${got ? '' : ' locked'}">${iconSVG(b.icon)}<span>${b.cn}</span></div>`;
   }).join('');
 }
-$('wkCat').addEventListener('click', () => {
+$('uCat').addEventListener('click', () => {
   sfx.tap();
-  say(pick(['Hello! Let us practice English today!', 'Meow! Five pages a day makes you strong!',
-    'I am Mimi. I practice with you every day!']), { cat: 'wkCat', after: 'happy' });
+  say(pick(['Hello! Let us practice English today!', 'Meow! A little every day makes you strong!',
+    'I am Mimi. I practice with you every day!']), { cat: 'uCat', after: 'happy' });
 });
 
-/* ================= DAY MENU ================= */
-function openDay(day) {
-  curDay = day;
-  const pg = pagesOf(day.id);
-  $('dayHero').innerHTML = `${iconInBubble(day.icon, day.color + '22')}
-    <div class="dh-day">${day.en} <span style="color:${day.color}">${day.cn}</span></div>
-    <div class="dh-theme">${day.theme} · ${day.themeCn}</div>
-    <div class="dh-words">${day.words.map(w => `<span>${w.w}</span>`).join('')}</div>`;
-  $('pageList').innerHTML = PAGE_KINDS.map((k, i) =>
+/* ================= LESSON LIST ================= */
+function renderWeek() {
+  const u = curUnit, ti = todayIdx();
+  const done = unitDone(u), n = u.lessons.length;
+  $('wkHero').innerHTML = `${iconInBubble(u.icon, u.color + '22')}
+    <div><div class="uh-name">${u.cn}</div><div class="uh-sub">${u.name} · ${u.sub}</div>
+    <div class="uc-bar" style="--c:${u.color}"><i style="width:${done / n * 100}%"></i></div></div>
+    <div class="uh-n" style="color:${u.color}">${done}/${n}</div>`;
+  $('wkBubble').textContent = done === n
+    ? (u.weekly ? '这一周全部完成啦!你太棒了!' : '这个单元全部学完啦!你真厉害!')
+    : u.byWeekday
+      ? `今天是${u.lessons[ti].cn} · 主题:${u.lessons[ti].themeCn}`
+      : `一共 ${n} 课,一天一课。继续第 ${done + 1} 课吧!`;
+
+  $('weekList').innerHTML = u.lessons.map((d, i) => {
+    const pg = pagesOf(u, d), got = pg.filter(x => x).length, fin = got === pg.length;
+    const isToday = u.byWeekday && i === ti;
+    const isNext = !u.byWeekday && i === done;
+    return `<button class="day-card${isToday || isNext ? ' today' : ''}${fin ? ' done' : ''}" data-i="${i}" style="--c:${d.color}">
+      ${isToday ? '<span class="dc-badge">今天 TODAY</span>' : isNext ? '<span class="dc-badge">下一课 NEXT</span>' : ''}
+      ${iconInBubble(d.icon, d.color + '22')}
+      <div class="dc-info">
+        <div class="dc-day">${d.en}<em>${d.cn}</em></div>
+        <div class="dc-theme">${d.theme} · ${d.themeCn} · ${got}/${pg.length} 页</div>
+        <div class="dc-prog">${pg.map(x => `<i class="${x ? 'on' : ''}"></i>`).join('')}</div>
+      </div>
+      ${fin ? `<svg class="dc-stamp" viewBox="0 0 100 100">${ICONS.check}</svg>` : ''}
+    </button>`;
+  }).join('');
+  $('weekList').querySelectorAll('.day-card').forEach(b => {
+    b.onclick = () => { sfx.tap(); openDay(u.lessons[+b.dataset.i]); };
+  });
+  $('pageLabel').innerHTML = `${u.cn}<span>${u.name}</span>`;
+  $('pageDots').innerHTML = '';
+}
+
+/* ================= LESSON MENU ================= */
+function openDay(lesson) {
+  curDay = lesson;
+  const pg = pagesOf(curUnit, lesson), kinds = kindsOf(lesson);
+  $('dayHero').innerHTML = `${iconInBubble(lesson.icon, lesson.color + '22')}
+    <div class="dh-day">${lesson.en} <span style="color:${lesson.color}">${lesson.cn}</span></div>
+    <div class="dh-theme">${lesson.theme} · ${lesson.themeCn}</div>
+    <div class="dh-words">${lesson.words.map(w => `<span>${w.w}</span>`).join('')}</div>`;
+  $('pageList').innerHTML = kinds.map((k, i) =>
     `<button class="page-row${pg[i] ? ' done' : ''}" data-i="${i}" style="--c:${k.color}">
       <span class="pr-n">${pg[i] ? '✓' : i + 1}</span>
       ${iconInBubble(k.icon, k.color + '22')}
@@ -197,44 +254,46 @@ function openDay(day) {
     b.onclick = () => { sfx.tap(); startPage(+b.dataset.i); };
   });
   const next = pg.findIndex(x => !x);
-  $('dayStart').innerHTML = next === -1 ? '今天已完成!再练一次 →' : `开始第 ${next + 1} 页 →`;
+  $('dayStart').innerHTML = next === -1 ? '这一课已完成!再练一次 →' : `开始第 ${next + 1} 页 →`;
   $('dayStart').onclick = () => { sfx.tap(); startPage(next === -1 ? 0 : next); };
-  $('pageLabel').innerHTML = `${day.en}<span>${day.cn} · ${day.themeCn}</span>`;
+  $('pageLabel').innerHTML = `${lesson.en}<span>${lesson.cn} · ${lesson.themeCn}</span>`;
   $('pageDots').innerHTML = pg.map(x => `<i class="${x ? 'done' : ''}"></i>`).join('');
   show('day');
 }
 
+const PAGE_FN = {
+  look: () => pageLook(), trace: () => pageTrace(), spell: () => pageSpell(),
+  listen: () => pageListen(), speak: () => pageSpeak(),
+  build: () => pageBuild(), order: () => pageOrder(),
+};
 function startPage(i) {
   curPage = i;
   setTopbar();
-  [pageLook, pageTrace, pageSpell, pageListen, pageSpeak][i]();
+  PAGE_FN[kindsOf(curDay)[i].id]();
 }
 
 /* mark page done, then advance */
 function finishPage() {
-  const pg = pagesOf(curDay.id);
+  const pg = pagesOf(curUnit, curDay);
   const firstTime = !pg[curPage];
   pg[curPage] = 1;
   save();
-  const allDone = pg.every(x => x);
-  if (allDone && firstTime) return dayComplete();
+  if (pg.every(x => x) && firstTime) return dayComplete();
 
   sfx.star(); confetti();
-  const k = PAGE_KINDS[curPage];
-  const last = curPage === 4;
+  const kinds = kindsOf(curDay), k = kinds[curPage], last = curPage === kinds.length - 1;
   overlay({
     mood: 'cheer',
     msg: `第 ${curPage + 1} 页完成!`,
     sub: `${k.cn} ${k.name} · 做得好!`,
     stamp: iconSVG('star'),
-    btn: last ? '回到今天' : `下一页:${PAGE_KINDS[curPage + 1].cn} →`,
+    btn: last ? '回到这一课' : `下一页:${kinds[curPage + 1].cn} →`,
     voice: pick(DAY_PRAISE),
     next: () => { if (last) openDay(curDay); else startPage(curPage + 1); },
   });
 }
 
 function dayComplete() {
-  // streak bookkeeping — only once per calendar day
   const t = todayKey();
   if (P.lastDone !== t) {
     P.streak = (P.lastDone === yesterdayKey()) ? P.streak + 1 : 1;
@@ -242,19 +301,19 @@ function dayComplete() {
     P.totalDays = (P.totalDays || 0) + 1;
     if (P.streak > (P.best || 0)) P.best = P.streak;
   }
-  P.stamps[curDay.id] = 1;
+  P.stamps[keyOf(curUnit, curDay)] = 1;
   save();
   sfx.fan(); confetti();
-  const weekDone = WEEK.every(d => dayDone(d.id));
+  const uDone = unitDone(curUnit) === curUnit.lessons.length;
   overlay({
     mood: 'cheer',
-    msg: weekDone ? '一整周全部完成!' : `${curDay.cn}的五页全部完成!`,
-    sub: weekDone ? '你是每日练习小冠军!' : `连续打卡 ${P.streak} 天 · 明天继续加油!`,
-    stamp: iconSVG('check') + iconSVG('star') + (weekDone ? iconSVG('crown') : iconSVG('trophy')),
+    msg: uDone ? `${curUnit.cn}全部完成!` : `${curDay.cn}全部完成!`,
+    sub: uDone ? '你是每日练习小冠军!' : `连续打卡 ${P.streak} 天 · 明天继续加油!`,
+    stamp: iconSVG('check') + iconSVG('star') + (uDone ? iconSVG('crown') : iconSVG('trophy')),
     btn: '好耶!',
-    voice: weekDone
-      ? 'You finished the whole week! You are my champion! Meow meow hooray!'
-      : `All five pages done! ${P.streak} days in a row! I am so proud of you!`,
+    voice: uDone
+      ? 'You finished the whole unit! You are my champion! Meow meow hooray!'
+      : `All pages done! ${P.streak} days in a row! I am so proud of you!`,
     next: () => { renderWeek(); show('week'); },
   });
 }
@@ -462,7 +521,9 @@ function speakLine() {
   const s = sk.list[sk.idx];
   $('speakCat').innerHTML = catSVG('idle');
   $('speakBubble').textContent = 'Listen, then say it with me!';
-  $('speakPic').innerHTML = s.color ? colorSVG(s.color) : iconInBubble(s.icon, '#FFF4DC');
+  $('speakPic').innerHTML = s.day !== undefined
+    ? dayCardSVG(DAY_INFO[s.day].short, s.day, DAY_INFO[s.day].color)
+    : (s.color ? colorSVG(s.color) : iconInBubble(s.icon, '#FFF4DC'));
   $('speakLine').innerHTML = s.t.split(' ').map(w => `<span class="sw">${w}&nbsp;</span>`).join('');
   $('speakCn').textContent = s.cn;
   $('speakSteps').innerHTML = sk.list.map((_, i) =>
@@ -499,17 +560,123 @@ function readLine() {
   say(s.t, { rate: 0.72, cat: 'speakCat' });
 }
 
+/* ================= PAGE: BUILD 拼一拼 (chunks) ================= */
+let bd = null;
+function pageBuild() {
+  bd = { list: curDay.build, idx: 0, next: 0 };
+  show('pBuild');
+  buildChunk();
+}
+function buildChunk() {
+  const it = bd.list[bd.idx];
+  bd.next = 0;
+  const di = DAY_INFO.findIndex(d => d.w === it.w);
+  $('buildPic').innerHTML = di >= 0
+    ? dayCardSVG(DAY_INFO[di].short, di, DAY_INFO[di].color)
+    : iconInBubble('calendar', '#EAF4FF');
+  $('buildSlots').innerHTML = it.parts.map(() => '<div class="chunk-slot"></div>').join('');
+  const tiles = shuffle(it.parts.concat([it.distract]));
+  $('buildTiles').innerHTML = tiles.map((p, i) =>
+    `<button class="chunk-tile" data-i="${i}">${p}</button>`).join('');
+  $('buildSteps').innerHTML = bd.list.map((_, i) =>
+    `<i class="${i === bd.idx ? 'on' : (i < bd.idx ? 'done' : '')}"></i>`).join('');
+  $('buildTiles').querySelectorAll('.chunk-tile').forEach(t => {
+    t.onclick = () => buildTap(t, it);
+  });
+  say(`Build the word... ${it.w}!`, {});
+}
+function buildTap(tile, it) {
+  const want = it.parts[bd.next];
+  if (tile.textContent === want) {
+    sfx.tap();
+    tile.classList.add('used');
+    const s = $('buildSlots').children[bd.next];
+    s.textContent = want; s.classList.add('filled');
+    bd.next++;
+    if (bd.next < it.parts.length) {
+      say(want, { rate: 0.7 });
+    } else {
+      sfx.good();
+      say(`${it.parts.join('... ')}... ${it.w}! ${pick(DAY_PRAISE)}`, {}, () => {
+        bd.idx++;
+        if (bd.idx < bd.list.length) buildChunk(); else finishPage();
+      });
+    }
+  } else {
+    sfx.bad();
+    tile.classList.remove('nope'); void tile.offsetWidth; tile.classList.add('nope');
+    setTimeout(() => tile.classList.remove('nope'), 450);
+    say(`Not that one. ${it.w} starts with ${it.parts[0]}.`, {});
+  }
+}
+
+/* ================= PAGE: ORDER 排一排 ================= */
+let ord = null;
+function pageOrder() {
+  ord = { seq: curDay.order, placed: 0, locked: false };
+  $('orderTip').innerHTML = `按顺序点出星期 · Tap the days in order!`;
+  $('orderSlots').innerHTML = ord.seq.map((_, i) =>
+    `<div class="order-slot"><span>${i + 1}</span></div>`).join('');
+  $('orderBank').innerHTML = shuffle(ord.seq).map(d =>
+    `<button class="order-card" data-d="${d}" style="--c:${DAY_INFO[d].color}">
+      ${dayCardSVG(DAY_INFO[d].short, d, DAY_INFO[d].color)}
+      <span>${DAY_INFO[d].w}</span></button>`).join('');
+  $('orderBank').querySelectorAll('.order-card').forEach(b => {
+    b.onclick = () => orderTap(b);
+  });
+  $('orderHint').innerHTML = btnIcon('speaker') + '给我提示 Hint';
+  $('orderHint').onclick = () => {
+    sfx.tap();
+    const nx = ord.seq[ord.placed];
+    say(ord.placed === 0
+      ? `The first one is ${DAY_INFO[nx].w}.`
+      : `After ${DAY_INFO[ord.seq[ord.placed - 1]].w} comes ${DAY_INFO[nx].w}.`, {});
+  };
+  show('pOrder');
+  const first = DAY_INFO[ord.seq[0]].w;
+  say(`Put the days in order. Start with ${first}!`, {});
+}
+function orderTap(b) {
+  if (ord.locked) return;
+  const d = +b.dataset.d;
+  if (d === ord.seq[ord.placed]) {
+    sfx.tap();
+    const slot = $('orderSlots').children[ord.placed];
+    slot.innerHTML = dayCardSVG(DAY_INFO[d].short, d, DAY_INFO[d].color);
+    slot.classList.add('filled');
+    b.classList.add('used');
+    ord.placed++;
+    if (ord.placed < ord.seq.length) {
+      say(DAY_INFO[d].w, { rate: 0.75 });
+    } else {
+      ord.locked = true;
+      sfx.good();
+      say(`${ord.seq.map(i => DAY_INFO[i].w).join(', ')}! ${pick(DAY_PRAISE)}`, {}, finishPage);
+    }
+  } else {
+    sfx.bad();
+    b.classList.remove('nope'); void b.offsetWidth; b.classList.add('nope');
+    setTimeout(() => b.classList.remove('nope'), 450);
+    const nx = ord.seq[ord.placed];
+    say(ord.placed === 0
+      ? `Start with ${DAY_INFO[nx].w}!`
+      : `What comes after ${DAY_INFO[ord.seq[ord.placed - 1]].w}?`, {});
+  }
+}
+
 /* ---------------- boot ---------------- */
-renderWeek();
-show('week');
+renderUnits();
+show('units');
 document.body.addEventListener('pointerdown', () => ac(), { once: true });
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 
 /* test hook */
 window.MW = {
-  openDay, startPage, finishPage, renderWeek,
-  get state() { return P; }, get day() { return curDay; },
+  openDay, startPage, finishPage, renderWeek, renderUnits,
+  setUnit: i => { curUnit = UNITS[i]; renderWeek(); show('week'); },
+  get state() { return P; }, get unit() { return curUnit; }, get day() { return curDay; },
   get ls() { return ls; }, get sp() { return sp; }, get tr() { return tr; },
-  WEEK,
+  get bd() { return bd; }, get ord() { return ord; },
+  UNITS, WEEK, DAY_INFO,
 };
 })();

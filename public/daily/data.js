@@ -145,6 +145,144 @@ const WEEK = [
   },
 ];
 
+/* ================================================================
+   UNIT 2 — Days of the Week 一周七天
+   ================================================================ */
+
+const DAY_INFO = [
+  { w: 'Monday',    short: 'Mon', cn: '星期一', color: '#E85D75', parts: ['Mon', 'day'] },
+  { w: 'Tuesday',   short: 'Tue', cn: '星期二', color: '#F5A623', parts: ['Tues', 'day'] },
+  { w: 'Wednesday', short: 'Wed', cn: '星期三', color: '#5FBB4E', parts: ['Wednes', 'day'] },
+  { w: 'Thursday',  short: 'Thu', cn: '星期四', color: '#26A69A', parts: ['Thurs', 'day'] },
+  { w: 'Friday',    short: 'Fri', cn: '星期五', color: '#4A90D9', parts: ['Fri', 'day'] },
+  { w: 'Saturday',  short: 'Sat', cn: '星期六', color: '#7C6CF6', parts: ['Satur', 'day'] },
+  { w: 'Sunday',    short: 'Sun', cn: '星期日', color: '#FF6B9D', parts: ['Sun', 'day'] },
+];
+/* word entry for the Look/Listen pages */
+const D = i => ({ w: DAY_INFO[i].w, day: i, cn: DAY_INFO[i].cn });
+/* chunk-building entry: real parts + one wrong prefix to choose against */
+const B = (i, dis) => ({ w: DAY_INFO[i].w, parts: DAY_INFO[i].parts, distract: DAY_INFO[dis].parts[0] });
+
+const DAYS_LESSONS = [
+  {
+    id: 'd1', en: 'Lesson 1', cn: '第 1 课', theme: 'Mon · Tue · Wed', themeCn: '一周的开始',
+    color: '#E85D75', icon: 'calendar',
+    pages: ['look', 'listen', 'build', 'trace', 'speak'],
+    words: [D(0), D(1), D(2)],
+    trace: ['Mon', 'Tue', 'Wed', 'Monday'],
+    build: [B(0, 1), B(1, 2), B(2, 0)],
+    sentences: [
+      { t: 'Today is Monday.', day: 0, cn: '今天是星期一。' },
+      { t: 'I go to school on Tuesday.', icon: 'book', cn: '我星期二去上学。' },
+      { t: 'Wednesday comes after Tuesday.', day: 2, cn: '星期三在星期二后面。' },
+    ],
+  },
+  {
+    id: 'd2', en: 'Lesson 2', cn: '第 2 课', theme: 'Thu · Fri', themeCn: '上学的最后两天',
+    color: '#26A69A', icon: 'calendar',
+    pages: ['look', 'listen', 'build', 'trace', 'speak'],
+    words: [D(3), D(4), D(2), D(1)],
+    trace: ['Thu', 'Fri', 'Friday', 'Thursday'],
+    build: [B(3, 5), B(4, 3), B(2, 4)],
+    sentences: [
+      { t: 'Thursday is day four.', day: 3, cn: '星期四是第四天。' },
+      { t: 'Friday is my favorite day!', day: 4, cn: '星期五是我最喜欢的一天!' },
+      { t: 'I have school five days.', icon: 'book', cn: '我一周上五天学。' },
+    ],
+  },
+  {
+    id: 'd3', en: 'Lesson 3', cn: '第 3 课', theme: 'Sat · Sun', themeCn: '周末啦!',
+    color: '#7C6CF6', icon: 'balloon',
+    pages: ['look', 'listen', 'build', 'trace', 'speak'],
+    words: [D(5), D(6), D(4)],
+    trace: ['Sat', 'Sun', 'Sunday', 'Saturday'],
+    build: [B(5, 6), B(6, 5), B(4, 0)],
+    sentences: [
+      { t: 'Saturday and Sunday are the weekend.', day: 5, cn: '星期六和星期日是周末。' },
+      { t: 'I play on Saturday.', icon: 'ball', cn: '我星期六玩。' },
+      { t: 'No school on Sunday!', icon: 'house', cn: '星期日不上学!' },
+    ],
+  },
+  {
+    id: 'd4', en: 'Lesson 4', cn: '第 4 课', theme: 'All Seven Days', themeCn: '七天排排队',
+    color: '#4A90D9', icon: 'order',
+    pages: ['look', 'order', 'listen', 'trace', 'speak'],
+    words: [D(0), D(1), D(2), D(3), D(4), D(5), D(6)],
+    order: [0, 1, 2, 3, 4, 5, 6],
+    trace: ['Mon', 'Wed', 'Sat', 'Tuesday'],
+    sentences: [
+      { t: 'There are seven days in a week.', icon: 'order', cn: '一周有七天。' },
+      { t: 'Monday is the first day.', day: 0, cn: '星期一是第一天。' },
+      { t: 'Sunday is the last day.', day: 6, cn: '星期日是最后一天。' },
+    ],
+  },
+  {
+    id: 'd5', en: 'Lesson 5', cn: '第 5 课', theme: 'Today · Tomorrow', themeCn: '今天 明天 昨天',
+    color: '#F5A623', icon: 'sun',
+    pages: ['look', 'listen', 'order', 'trace', 'speak'],
+    words: [
+      { w: 'today', icon: 'calendar', cn: '今天' },
+      { w: 'tomorrow', icon: 'sun', cn: '明天' },
+      { w: 'yesterday', icon: 'moon', cn: '昨天' },
+      { w: 'week', icon: 'order', cn: '一周' },
+    ],
+    order: [2, 3, 4, 5],
+    trace: ['day', 'week', 'today', 'Sunday'],
+    sentences: [
+      { t: 'Today is Wednesday.', day: 2, cn: '今天是星期三。' },
+      { t: 'Tomorrow is Thursday.', day: 3, cn: '明天是星期四。' },
+      { t: 'Yesterday was Tuesday.', day: 1, cn: '昨天是星期二。' },
+    ],
+  },
+  {
+    id: 'd6', en: 'Lesson 6', cn: '第 6 课', theme: 'What Day Is It?', themeCn: '今天星期几?',
+    color: '#5FBB4E', icon: 'chat',
+    pages: ['look', 'listen', 'order', 'build', 'speak'],
+    words: [D(0), D(2), D(4), D(5), D(6)],
+    order: [3, 4, 5, 6],
+    build: [B(1, 3), B(3, 1), B(5, 2)],
+    sentences: [
+      { t: 'What day is it today?', icon: 'chat', cn: '今天星期几?' },
+      { t: 'It is Friday today!', day: 4, cn: '今天是星期五!' },
+      { t: 'See you on Monday!', day: 0, cn: '星期一见!' },
+    ],
+  },
+  {
+    id: 'd7', en: 'Lesson 7', cn: '第 7 课', theme: 'The Week Song', themeCn: '一周儿歌 · 复习',
+    color: '#FF6B9D', icon: 'trophy',
+    pages: ['look', 'order', 'build', 'listen', 'speak'],
+    words: [D(0), D(1), D(2), D(3), D(4), D(5), D(6)],
+    order: [0, 1, 2, 3, 4, 5, 6],
+    build: [B(2, 5), B(5, 3), B(6, 1)],
+    sentences: [
+      { t: 'Monday, Tuesday, Wednesday, Thursday.', icon: 'order', cn: '周一、周二、周三、周四。' },
+      { t: 'Friday, Saturday, Sunday!', icon: 'balloon', cn: '周五、周六、周日!' },
+      { t: 'Seven days in one week. Hooray!', icon: 'trophy', cn: '一周七天,好耶!' },
+    ],
+  },
+];
+
+/* ---------------- units ---------------- */
+const UNITS = [
+  {
+    id: 'words', name: 'Everyday Words', cn: '主题词汇周',
+    sub: '动物 · 食物 · 颜色 · 身体 · 天气', icon: 'star', color: '#5FBB4E',
+    byWeekday: true, weekly: true, lessons: WEEK,
+  },
+  {
+    id: 'days', name: 'Days of the Week', cn: '一周七天',
+    sub: 'Monday → Sunday · 7 课', icon: 'calendar', color: '#4A90D9',
+    byWeekday: false, weekly: false, lessons: DAYS_LESSONS,
+  },
+];
+
+/* Page kinds used by the days unit, added to the five base kinds */
+PAGE_KINDS.push(
+  { id: 'build', name: 'Build It',     cn: '拼一拼', skill: '拼', icon: 'box',   color: '#5FBB4E' },
+  { id: 'order', name: 'Put in Order', cn: '排一排', skill: '排', icon: 'order', color: '#7C6CF6' },
+);
+const KIND = id => PAGE_KINDS.find(k => k.id === id);
+
 /* Mimi's lines */
 const DAY_PRAISE = [
   'Yay! You did it!', 'Wonderful!', 'Super duper!', 'You are amazing!',

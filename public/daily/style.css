@@ -248,3 +248,73 @@ button{font-family:inherit;color:inherit}
   .spell-slot,.spell-tile{width:54px;height:62px;font-size:1.8rem}
   .look-card .pic{width:64px;height:64px}
 }
+
+/* ---------- unit picker ---------- */
+.unit-list{display:flex;flex-direction:column;gap:12px}
+.unit-card{
+  display:flex;align-items:center;gap:13px;background:#fff;border:none;border-radius:22px;padding:15px;
+  cursor:pointer;box-shadow:0 4px 14px rgba(40,70,100,.1);border-left:9px solid var(--c);
+  transition:transform .12s;text-align:left;
+}
+.unit-card:active{transform:scale(.97)}
+.unit-card .pic{width:54px;height:54px;flex-shrink:0}
+.uc-info{flex:1;min-width:0}
+.uc-name{font-size:1.14rem;font-weight:900}
+.uc-name em{font-style:normal;font-size:.82rem;color:#9aacbe;font-weight:700;margin-left:5px}
+.uc-sub{font-size:.8rem;color:#7d94a8;margin-top:2px}
+.uc-bar{height:7px;background:#E9F0F6;border-radius:4px;margin-top:8px;overflow:hidden}
+.uc-bar i{display:block;height:100%;background:var(--c);border-radius:4px;transition:width .4s}
+.uc-n{font-weight:900;font-size:1.05rem;color:var(--c);text-align:center;flex-shrink:0}
+.uc-n span{display:block}
+.uc-n svg{width:22px;height:22px;margin-top:2px}
+
+/* lesson-list hero */
+.unit-hero{
+  display:flex;align-items:center;gap:12px;background:#fff;border-radius:22px;padding:15px;
+  box-shadow:0 5px 16px rgba(40,70,100,.1);margin:4px 0 12px;
+}
+.unit-hero .pic{width:52px;height:52px;flex-shrink:0}
+.unit-hero>div:nth-child(2){flex:1;min-width:0}
+.uh-name{font-size:1.16rem;font-weight:900}
+.uh-sub{font-size:.78rem;color:#7d94a8;margin-top:2px}
+.uh-n{font-size:1.15rem;font-weight:900;flex-shrink:0}
+
+/* ---------- build page (chunk tiles) ---------- */
+.chunk-slots{display:flex;justify-content:center;gap:8px;margin:16px 0;flex-wrap:wrap}
+.chunk-slot{
+  min-width:88px;height:64px;padding:0 12px;border-radius:15px;background:#fff;border:3px dashed #C9DCEA;
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:var(--ink);
+}
+.chunk-slot.filled{border-style:solid;border-color:var(--green);background:#F2FBEE;animation:plop .25s ease}
+.chunk-tiles{display:flex;justify-content:center;gap:11px;flex-wrap:wrap}
+.chunk-tile{
+  min-width:92px;height:66px;padding:0 14px;border-radius:15px;border:none;background:var(--blue);color:#fff;
+  font-size:1.5rem;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #2F6CAE;transition:transform .1s;
+}
+.chunk-tile:active{transform:translateY(3px);box-shadow:0 2px 0 #2F6CAE}
+.chunk-tile.used{visibility:hidden}
+.chunk-tile.nope{animation:shake .4s ease;background:var(--red);box-shadow:0 5px 0 #A93630}
+
+/* ---------- order page ---------- */
+.order-slots{
+  display:flex;gap:6px;justify-content:center;flex-wrap:wrap;background:#fff;border-radius:18px;
+  padding:12px 10px;box-shadow:0 4px 14px rgba(40,70,100,.09);margin-bottom:16px;
+}
+.order-slot{
+  width:42px;height:52px;border-radius:11px;border:2.5px dashed #C9DCEA;display:flex;
+  align-items:center;justify-content:center;position:relative;
+}
+.order-slot span{font-weight:900;color:#C9DCEA;font-size:1rem}
+.order-slot.filled{border-style:solid;border-color:var(--green);background:#F6FDF3;animation:plop .25s ease}
+.order-slot svg{width:100%;height:100%}
+.order-bank{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.order-card{
+  background:#fff;border:3px solid transparent;border-radius:16px;padding:8px 4px 6px;cursor:pointer;
+  box-shadow:0 4px 0 #DCE7EF;transition:transform .1s;display:flex;flex-direction:column;align-items:center;gap:2px;
+}
+.order-card:active{transform:translateY(3px);box-shadow:0 1px 0 #DCE7EF}
+.order-card svg{width:52px;height:52px}
+.order-card span{font-size:.8rem;font-weight:900;color:var(--c)}
+.order-card.used{visibility:hidden}
+.order-card.nope{border-color:var(--red);background:#FDEDEC;animation:shake .4s ease}
+#pOrder .btn{margin-top:auto}

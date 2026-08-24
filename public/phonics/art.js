@@ -503,6 +503,40 @@ ICONS.mouth = FACE_EARS + FACE_BASE + FACE_EYES + FACE_NOSE +
   `<path d="M34 68 Q50 88 66 68 Z" fill="#8C4A5A"/><path d="M41 74 Q50 82 59 74 Z" fill="#F27E9B"/>` +
   RING(50, 74, 22, 15);
 
+/* A calendar page for one weekday: short name + its place in the week */
+function dayCardSVG(short, pos, color, cls) {
+  const dots = Array.from({ length: 7 }, (_, i) =>
+    `<circle cx="${20 + i * 10}" cy="80" r="${i === pos ? 4.6 : 3}" fill="${i === pos ? color : '#D3DFE9'}"/>`).join('');
+  return `<svg class="${cls || 'pic'}" viewBox="0 0 100 100" aria-hidden="true">
+    <rect x="9" y="19" width="82" height="72" rx="11" fill="#FFFFFF" stroke="${color}" stroke-width="5"/>
+    <rect x="9" y="19" width="82" height="17" rx="8.5" fill="${color}"/>
+    <line x1="31" y1="9" x2="31" y2="27" stroke="${color}" stroke-width="7" stroke-linecap="round"/>
+    <line x1="69" y1="9" x2="69" y2="27" stroke="${color}" stroke-width="7" stroke-linecap="round"/>
+    <text x="50" y="66" text-anchor="middle" font-family="Nunito, sans-serif" font-size="26"
+          font-weight="900" fill="${color}">${short}</text>
+    ${dots}
+  </svg>`;
+}
+
+/* A generic calendar icon */
+ICONS.calendar = `
+  <rect x="9" y="19" width="82" height="72" rx="11" fill="#FFFFFF" stroke="#4A90D9" stroke-width="5"/>
+  <rect x="9" y="19" width="82" height="18" rx="9" fill="#4A90D9"/>
+  <line x1="31" y1="9" x2="31" y2="27" stroke="#2F6CAE" stroke-width="7" stroke-linecap="round"/>
+  <line x1="69" y1="9" x2="69" y2="27" stroke="#2F6CAE" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="30" cy="53" r="6" fill="#5FBB4E"/><circle cx="50" cy="53" r="6" fill="#5FBB4E"/>
+  <circle cx="70" cy="53" r="6" fill="#FFC93C"/>
+  <circle cx="30" cy="74" r="6" fill="#E3ECF3"/><circle cx="50" cy="74" r="6" fill="#E3ECF3"/>
+  <circle cx="70" cy="74" r="6" fill="#E3ECF3"/>`;
+
+/* Sequence arrow — used by the "put in order" page */
+ICONS.order = `
+  <rect x="8" y="38" width="22" height="24" rx="6" fill="#5FBB4E"/>
+  <rect x="39" y="38" width="22" height="24" rx="6" fill="#4A90D9"/>
+  <rect x="70" y="38" width="22" height="24" rx="6" fill="#7C6CF6"/>
+  <path d="M8 74 H84 M84 74 l-8 -5 M84 74 l-8 5" stroke="#8BA0B3" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M14 28 h72 M86 28 l-8 -5 M86 28 l-8 5" stroke="#8BA0B3" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+
 /* A paint blob in any color — used for the colors day */
 function colorSVG(hex, cls) {
   return `<svg class="${cls || 'pic'}" viewBox="0 0 100 100" aria-hidden="true">
