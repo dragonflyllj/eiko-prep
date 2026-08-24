@@ -315,6 +315,6 @@ button{font-family:inherit;color:inherit}
 .order-card:active{transform:translateY(3px);box-shadow:0 1px 0 #DCE7EF}
 .order-card svg{width:52px;height:52px}
 .order-card span{font-size:.8rem;font-weight:900;color:var(--c)}
-.order-card.used{visibility:hidden}
+.order-card.used{opacity:.28;pointer-events:none;box-shadow:none;background:#EEF4F9}
 .order-card.nope{border-color:var(--red);background:#FDEDEC;animation:shake .4s ease}
 #pOrder .btn{margin-top:auto}
