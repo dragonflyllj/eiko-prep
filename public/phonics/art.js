@@ -408,7 +408,142 @@ const ICONS = {
       <path d="M34 64 Q32 80 28 88"/><path d="M44 64 Q44 82 42 92"/>
       <path d="M56 64 Q56 82 58 92"/><path d="M66 64 Q68 80 72 88"/>
     </g>`,
+
+  /* ---- daily-practice additions ---- */
+  bird: `
+    <path d="M16 58 L2 44 L5 60 L2 74 Z" fill="#3FA9DA"/>
+    <ellipse cx="46" cy="58" rx="30" ry="25" fill="#5BC0EB"/>
+    <circle cx="64" cy="40" r="17" fill="#5BC0EB"/>
+    <path d="M79 38 L94 44 L79 50 Z" fill="#F5A623"/>
+    <path d="M30 52 Q46 46 58 60 Q44 72 30 64 Z" fill="#3FA9DA"/>
+    <circle cx="68" cy="36" r="4.4" fill="#22303D"/><circle cx="69.5" cy="34.5" r="1.6" fill="#FFF"/>
+    <path d="M42 82 L42 93 M56 82 L56 93" stroke="#F5A623" stroke-width="4.5" stroke-linecap="round"/>`,
+
+  milk: `
+    <path d="M30 36 L70 36 L70 88 Q70 93 65 93 L35 93 Q30 93 30 88 Z" fill="#FFFFFF" stroke="#CBD9E5" stroke-width="3"/>
+    <path d="M30 36 L50 12 L70 36 Z" fill="#EAF4FF" stroke="#CBD9E5" stroke-width="3"/>
+    <rect x="37" y="52" width="26" height="26" rx="5" fill="#4A90D9"/>
+    <path d="M50 58 Q56 66 50 72 Q44 66 50 58 Z" fill="#FFFFFF"/>
+    <path d="M40 22 L50 12 L60 22" fill="none" stroke="#CBD9E5" stroke-width="3"/>`,
+
+  bread: `
+    <path d="M14 56 Q14 26 50 26 Q86 26 86 56 L86 76 Q86 84 78 84 L22 84 Q14 84 14 76 Z" fill="#D9A05B"/>
+    <path d="M22 56 Q22 36 50 36 Q78 36 78 56 L78 72 L22 72 Z" fill="#F0C98A"/>
+    <path d="M32 34 Q34 24 44 28 M52 30 Q56 20 66 26" stroke="#C08A50" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <circle cx="38" cy="56" r="4" fill="#E3B375"/><circle cx="58" cy="62" r="3.4" fill="#E3B375"/>`,
+
+  door: `
+    <rect x="22" y="8" width="56" height="86" rx="7" fill="#A9743C"/>
+    <rect x="29" y="15" width="42" height="72" rx="5" fill="#C89660"/>
+    <rect x="35" y="22" width="30" height="24" rx="4" fill="#B4834C"/>
+    <rect x="35" y="56" width="30" height="24" rx="4" fill="#B4834C"/>
+    <circle cx="64" cy="52" r="5" fill="#F5C24B"/>`,
+
+  hand: `
+    <path d="M32 92 Q22 74 24 54 Q25 46 32 46 Q38 46 38 54 L38 34 Q38 26 45 26 Q52 26 52 34 L52 30 Q52 22 59 22 Q66 22 66 30 L66 38 Q66 32 72 32 Q79 32 79 40 Q79 66 70 80 Q62 93 48 93 Z" fill="#F2C9A0" stroke="#DBA97A" stroke-width="3"/>
+    <path d="M38 56 L38 66 M52 50 L52 62 M66 50 L66 60" stroke="#DBA97A" stroke-width="3" stroke-linecap="round"/>`,
+
+  doll: `
+    <path d="M26 40 Q26 8 50 8 Q74 8 74 40 Q74 46 68 46 L32 46 Q26 46 26 40 Z" fill="#8C5A3C"/>
+    <circle cx="50" cy="44" r="24" fill="#F7D9BE"/>
+    <circle cx="42" cy="42" r="3.6" fill="#3D2A16"/><circle cx="58" cy="42" r="3.6" fill="#3D2A16"/>
+    <path d="M44 52 Q50 57 56 52" stroke="#D4737E" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    <circle cx="34" cy="48" r="4" fill="#F7A8B0" opacity=".8"/><circle cx="66" cy="48" r="4" fill="#F7A8B0" opacity=".8"/>
+    <path d="M32 70 Q32 62 50 62 Q68 62 68 70 L72 92 L28 92 Z" fill="#F48FB1"/>
+    <path d="M28 72 L14 82 M72 72 L86 82" stroke="#F7D9BE" stroke-width="9" stroke-linecap="round"/>`,
+
+  car: `
+    <path d="M12 66 L14 52 Q15 46 22 46 L30 46 L40 30 Q42 26 48 26 L64 26 Q70 26 73 31 L82 46 L86 48 Q90 50 90 56 L90 66 Q90 70 86 70 L16 70 Q12 70 12 66 Z" fill="#E8483F"/>
+    <path d="M44 32 L58 32 L64 44 L40 44 Z" fill="#D6EBFA"/>
+    <path d="M33 44 L41 33 L38 44 Z" fill="#D6EBFA"/>
+    <circle cx="30" cy="72" r="11" fill="#33414F"/><circle cx="30" cy="72" r="4.6" fill="#AEB9C4"/>
+    <circle cx="72" cy="72" r="11" fill="#33414F"/><circle cx="72" cy="72" r="4.6" fill="#AEB9C4"/>
+    <circle cx="86" cy="56" r="4" fill="#FFE79C"/>`,
+
+  rain: `
+    <path d="M28 56 Q10 56 10 42 Q10 28 24 28 Q28 12 44 12 Q58 12 62 24 Q78 22 82 34 Q92 36 92 46 Q92 56 78 56 Z" fill="#B9C7D4"/>
+    <g stroke="#4A90D9" stroke-width="7" stroke-linecap="round">
+      <line x1="28" y1="68" x2="23" y2="82"/><line x1="48" y1="66" x2="43" y2="84"/>
+      <line x1="68" y1="68" x2="63" y2="82"/><line x1="38" y1="82" x2="35" y2="92"/>
+      <line x1="60" y1="84" x2="57" y2="93"/>
+    </g>`,
+
+  tree: `
+    <rect x="43" y="58" width="14" height="36" rx="5" fill="#8A5A2B"/>
+    <circle cx="50" cy="34" r="26" fill="#5FBB4E"/>
+    <circle cx="28" cy="48" r="18" fill="#6DC95B"/>
+    <circle cx="72" cy="48" r="18" fill="#6DC95B"/>
+    <circle cx="50" cy="52" r="18" fill="#54AC44"/>
+    <circle cx="38" cy="30" r="5" fill="#84D673"/><circle cx="62" cy="42" r="4" fill="#84D673"/>`,
 };
+
+/* Body parts: one friendly face, with the named part highlighted */
+const FACE_BASE = `
+  <circle cx="50" cy="52" r="40" fill="#F7D9BE"/>
+  <path d="M22 30 Q26 8 50 8 Q74 8 78 30 Q64 20 50 22 Q36 20 22 30 Z" fill="#5D4032"/>`;
+const FACE_EARS = `<ellipse cx="12" cy="54" rx="8" ry="11" fill="#F2C9A0"/><ellipse cx="88" cy="54" rx="8" ry="11" fill="#F2C9A0"/>`;
+const FACE_EYES = `<circle cx="37" cy="48" r="5" fill="#33261A"/><circle cx="63" cy="48" r="5" fill="#33261A"/>`;
+const FACE_NOSE = `<path d="M50 52 Q46 62 52 63" stroke="#DBA97A" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
+const FACE_MOUTH = `<path d="M38 72 Q50 82 62 72" stroke="#C4636F" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+const RING = (cx, cy, rx, ry) =>
+  `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="#E8483F" stroke-width="4" stroke-dasharray="7 5"/>`;
+
+ICONS.eye = FACE_EARS + FACE_BASE + FACE_NOSE + FACE_MOUTH +
+  `<circle cx="37" cy="48" r="9" fill="#FFF" stroke="#33261A" stroke-width="2"/><circle cx="37" cy="48" r="5" fill="#33261A"/>` +
+  `<circle cx="63" cy="48" r="9" fill="#FFF" stroke="#33261A" stroke-width="2"/><circle cx="63" cy="48" r="5" fill="#33261A"/>` +
+  RING(50, 48, 34, 15);
+ICONS.ear2 = FACE_BASE + FACE_EYES + FACE_NOSE + FACE_MOUTH +
+  `<ellipse cx="12" cy="54" rx="10" ry="14" fill="#F2C9A0" stroke="#DBA97A" stroke-width="2"/>` +
+  `<ellipse cx="88" cy="54" rx="10" ry="14" fill="#F2C9A0" stroke="#DBA97A" stroke-width="2"/>` +
+  RING(12, 54, 15, 19) + RING(88, 54, 15, 19);
+ICONS.nose = FACE_EARS + FACE_BASE + FACE_EYES + FACE_MOUTH +
+  `<path d="M50 46 Q44 62 52 64" stroke="#C98F63" stroke-width="5" fill="none" stroke-linecap="round"/>` +
+  RING(50, 56, 15, 15);
+ICONS.mouth = FACE_EARS + FACE_BASE + FACE_EYES + FACE_NOSE +
+  `<path d="M34 68 Q50 88 66 68 Z" fill="#8C4A5A"/><path d="M41 74 Q50 82 59 74 Z" fill="#F27E9B"/>` +
+  RING(50, 74, 22, 15);
+
+/* A calendar page for one weekday: short name + its place in the week */
+function dayCardSVG(short, pos, color, cls) {
+  const dots = Array.from({ length: 7 }, (_, i) =>
+    `<circle cx="${20 + i * 10}" cy="80" r="${i === pos ? 4.6 : 3}" fill="${i === pos ? color : '#D3DFE9'}"/>`).join('');
+  return `<svg class="${cls || 'pic'}" viewBox="0 0 100 100" aria-hidden="true">
+    <rect x="9" y="19" width="82" height="72" rx="11" fill="#FFFFFF" stroke="${color}" stroke-width="5"/>
+    <rect x="9" y="19" width="82" height="17" rx="8.5" fill="${color}"/>
+    <line x1="31" y1="9" x2="31" y2="27" stroke="${color}" stroke-width="7" stroke-linecap="round"/>
+    <line x1="69" y1="9" x2="69" y2="27" stroke="${color}" stroke-width="7" stroke-linecap="round"/>
+    <text x="50" y="66" text-anchor="middle" font-family="Nunito, sans-serif" font-size="26"
+          font-weight="900" fill="${color}">${short}</text>
+    ${dots}
+  </svg>`;
+}
+
+/* A generic calendar icon */
+ICONS.calendar = `
+  <rect x="9" y="19" width="82" height="72" rx="11" fill="#FFFFFF" stroke="#4A90D9" stroke-width="5"/>
+  <rect x="9" y="19" width="82" height="18" rx="9" fill="#4A90D9"/>
+  <line x1="31" y1="9" x2="31" y2="27" stroke="#2F6CAE" stroke-width="7" stroke-linecap="round"/>
+  <line x1="69" y1="9" x2="69" y2="27" stroke="#2F6CAE" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="30" cy="53" r="6" fill="#5FBB4E"/><circle cx="50" cy="53" r="6" fill="#5FBB4E"/>
+  <circle cx="70" cy="53" r="6" fill="#FFC93C"/>
+  <circle cx="30" cy="74" r="6" fill="#E3ECF3"/><circle cx="50" cy="74" r="6" fill="#E3ECF3"/>
+  <circle cx="70" cy="74" r="6" fill="#E3ECF3"/>`;
+
+/* Sequence arrow — used by the "put in order" page */
+ICONS.order = `
+  <rect x="8" y="38" width="22" height="24" rx="6" fill="#5FBB4E"/>
+  <rect x="39" y="38" width="22" height="24" rx="6" fill="#4A90D9"/>
+  <rect x="70" y="38" width="22" height="24" rx="6" fill="#7C6CF6"/>
+  <path d="M8 74 H84 M84 74 l-8 -5 M84 74 l-8 5" stroke="#8BA0B3" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M14 28 h72 M86 28 l-8 -5 M86 28 l-8 5" stroke="#8BA0B3" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+
+/* A paint blob in any color — used for the colors day */
+function colorSVG(hex, cls) {
+  return `<svg class="${cls || 'pic'}" viewBox="0 0 100 100" aria-hidden="true">
+    <path d="M50 10 C74 10 90 28 90 50 C90 74 72 90 50 90 C26 90 10 72 10 50 C10 26 28 10 50 10 Z" fill="${hex}"/>
+    <path d="M30 30 Q22 40 24 52" stroke="#FFFFFF" stroke-width="7" fill="none" stroke-linecap="round" opacity=".45"/>
+  </svg>`;
+}
 
 /* Word-image color plates: soft circle behind each icon */
 function iconSVG(name, cls) {

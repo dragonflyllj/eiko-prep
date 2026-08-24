@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4A90D9">
+<title>Mimi's Week — Daily English</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="topbar" class="hidden">
+  <button id="backBtn" class="round-btn" aria-label="Back"></button>
+  <div id="pageLabel" class="page-label"></div>
+  <div id="pageDots" class="page-dots"></div>
+</header>
+
+<main>
+
+  <!-- UNIT PICKER (home) -->
+  <section id="units" class="screen active">
+    <div class="wk-head">
+      <div id="uCat" class="cat-mini"></div>
+      <div>
+        <h1 class="app-title">Mimi's Week</h1>
+        <p class="app-sub">每天五页,听说读写</p>
+      </div>
+    </div>
+    <div id="uStreak" class="streak-bar"></div>
+    <div id="uBubble" class="bubble"></div>
+    <p class="tip">选一个练习单元 · Pick a unit</p>
+    <div id="unitList" class="unit-list"></div>
+    <div id="uBadges" class="badge-row"></div>
+    <a class="exit-link" href="/">&larr; Eik&#333; Prep home</a>
+  </section>
+
+  <!-- LESSON LIST -->
+  <section id="week" class="screen">
+    <div id="wkHero" class="unit-hero"></div>
+    <div id="wkBubble" class="bubble"></div>
+    <div id="weekList" class="week-list"></div>
+  </section>
+
+  <!-- DAY MENU: the 5 pages -->
+  <section id="day" class="screen">
+    <div id="dayHero" class="day-hero"></div>
+    <div id="pageList" class="page-list"></div>
+    <button id="dayStart" class="btn btn-green btn-wide"></button>
+  </section>
+
+  <!-- PAGE 1: LOOK -->
+  <section id="pLook" class="screen">
+    <p class="tip" id="lookTip"></p>
+    <div id="lookGrid" class="look-grid"></div>
+    <button id="lookDone" class="btn btn-green btn-wide" disabled></button>
+  </section>
+
+  <!-- PAGE 2: TRACE -->
+  <section id="pTrace" class="screen">
+    <p class="tip">用手指描一描 · Trace with your finger!</p>
+    <div class="trace-wrap">
+      <div id="traceGuide" class="trace-guide"></div>
+      <canvas id="traceCanvas"></canvas>
+    </div>
+    <div id="traceMeter" class="trace-meter"><i></i></div>
+    <div class="btn-row">
+      <button id="traceClear" class="btn btn-grey"></button>
+      <button id="traceNext" class="btn btn-orange" disabled></button>
+    </div>
+    <div id="traceSteps" class="mini-dots"></div>
+  </section>
+
+  <!-- PAGE 3: SPELL -->
+  <section id="pSpell" class="screen">
+    <p class="tip">听一听,再把字母排好 · Build the word!</p>
+    <div id="spellPic" class="spell-pic"></div>
+    <div id="spellSlots" class="spell-slots"></div>
+    <div id="spellTiles" class="spell-tiles"></div>
+    <div id="spellSteps" class="mini-dots"></div>
+  </section>
+
+  <!-- PAGE 4: LISTEN -->
+  <section id="pListen" class="screen">
+    <p class="tip">听 Mimi 说,点对的图片 · Listen and find!</p>
+    <button id="listenBtn" class="listen-btn"></button>
+    <div id="listenGrid" class="listen-grid"></div>
+    <div id="listenSteps" class="mini-dots"></div>
+  </section>
+
+  <!-- PAGE: BUILD (chunk tiles) -->
+  <section id="pBuild" class="screen">
+    <p class="tip">每个星期都以 <b>-day</b> 结尾!把它拼起来 · Build the day!</p>
+    <div id="buildPic" class="spell-pic"></div>
+    <div id="buildSlots" class="chunk-slots"></div>
+    <div id="buildTiles" class="chunk-tiles"></div>
+    <div id="buildSteps" class="mini-dots"></div>
+  </section>
+
+  <!-- PAGE: ORDER (sequence the days) -->
+  <section id="pOrder" class="screen">
+    <p class="tip" id="orderTip"></p>
+    <div id="orderSlots" class="order-slots"></div>
+    <div id="orderBank" class="order-bank"></div>
+    <button id="orderHint" class="btn btn-blue"></button>
+  </section>
+
+  <!-- PAGE 5: SPEAK -->
+  <section id="pSpeak" class="screen">
+    <div class="speak-stage">
+      <div id="speakCat" class="cat-box"></div>
+      <div id="speakBubble" class="bubble talk"></div>
+    </div>
+    <div id="speakPic" class="speak-pic"></div>
+    <div id="speakLine" class="speak-line"></div>
+    <div id="speakCn" class="speak-cn"></div>
+    <div id="speakBtns" class="speak-btns"></div>
+    <div id="speakSteps" class="mini-dots"></div>
+  </section>
+
+</main>
+
+<div id="celebrate" class="overlay hidden">
+  <div class="ov-inner">
+    <div id="celCat" class="cat-box"></div>
+    <div id="celMsg" class="ov-msg"></div>
+    <div id="celSub" class="ov-sub"></div>
+    <div id="celStamp" class="ov-stamp"></div>
+    <button id="celBtn" class="btn btn-green btn-wide">Next!</button>
+  </div>
+</div>
+<div id="confetti"></div>
+
+<script src="../phonics/art.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
