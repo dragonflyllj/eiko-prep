@@ -167,8 +167,9 @@ button{font-family:inherit;color:inherit}
 .trace-guide{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   font-weight:900;color:rgba(74,144,217,.2);pointer-events:none;user-select:none;line-height:1;
-  letter-spacing:.04em;
+  letter-spacing:.04em;overflow:hidden;padding:0 6px;
 }
+.trace-guide span{white-space:nowrap;line-height:1;display:block}
 #traceCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
 .trace-meter{height:10px;background:#E3ECF3;border-radius:6px;margin-top:12px;overflow:hidden}
 .trace-meter i{display:block;height:100%;width:0;background:var(--green);border-radius:6px;transition:width .2s}
@@ -318,3 +319,14 @@ button{font-family:inherit;color:inherit}
 .order-card.used{opacity:.28;pointer-events:none;box-shadow:none;background:#EEF4F9}
 .order-card.nope{border-color:var(--red);background:#FDEDEC;animation:shake .4s ease}
 #pOrder .btn{margin-top:auto}
+
+/* link back to the Eiko Prep main page */
+.home-link{
+  display:flex;align-items:center;gap:12px;background:#fff;border-radius:20px;padding:14px 16px;
+  margin-top:18px;text-decoration:none;color:var(--ink);box-shadow:0 4px 14px rgba(40,70,100,.1);
+  border-left:8px solid var(--cat-d);transition:transform .12s;
+}
+.home-link:active{transform:scale(.97)}
+.home-link svg{width:42px;height:42px;flex-shrink:0}
+.home-link span{font-weight:900;font-size:1rem;display:flex;flex-direction:column}
+.home-link em{font-style:normal;font-weight:700;font-size:.78rem;color:#8ba0b3;margin-top:2px}

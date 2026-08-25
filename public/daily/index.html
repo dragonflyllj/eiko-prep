@@ -14,6 +14,7 @@
 
 <header id="topbar" class="hidden">
   <button id="backBtn" class="round-btn" aria-label="Back"></button>
+  <button id="homeBtn" class="round-btn" aria-label="Home"></button>
   <div id="pageLabel" class="page-label"></div>
   <div id="pageDots" class="page-dots"></div>
 </header>
@@ -34,7 +35,16 @@
     <p class="tip">选一个练习单元 · Pick a unit</p>
     <div id="unitList" class="unit-list"></div>
     <div id="uBadges" class="badge-row"></div>
-    <a class="exit-link" href="/">&larr; Eik&#333; Prep home</a>
+    <a class="home-link" href="/">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M50 8 L92 44 L82 44 L82 88 L18 88 L18 44 L8 44 Z" fill="#F6EBDC"/>
+        <path d="M50 8 L92 44 L82 44 L50 18 L18 44 L8 44 Z" fill="#E8483F"/>
+        <rect x="42" y="58" width="18" height="30" rx="4" fill="#8A5A2B"/>
+        <rect x="22" y="52" width="14" height="14" rx="3" fill="#BFE3F5" stroke="#8A97A5" stroke-width="2"/>
+        <rect x="66" y="52" width="14" height="14" rx="3" fill="#BFE3F5" stroke="#8A97A5" stroke-width="2"/>
+      </svg>
+      <span>回到 Eik&#333; Prep 主页<em>All apps &amp; games</em></span>
+    </a>
   </section>
 
   <!-- LESSON LIST -->

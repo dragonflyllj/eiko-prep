@@ -147,6 +147,10 @@ $('backBtn').onclick = () => {
   else { renderUnits(); show('units'); }
 };
 
+/* home button — jumps straight to the unit picker from any page */
+$('homeBtn').innerHTML = iconSVG('house');
+$('homeBtn').onclick = () => { sfx.tap(); renderUnits(); show('units'); };
+
 function setTopbar() {
   const k = kindsOf(curDay)[curPage], n = pageCount(curDay);
   $('pageLabel').innerHTML = `${k.cn} · ${k.name}<span>${curDay.cn} ${curDay.themeCn} · 第 ${curPage + 1} / ${n} 页</span>`;
@@ -368,10 +372,8 @@ function pageTrace() {
 }
 function traceItem() {
   const item = tr.items[tr.idx];
-  const guide = $('traceGuide');
   // single letters get both cases so the child sees the pair; words stay as-is
-  guide.textContent = item.length === 1 ? item.toUpperCase() + item : item;
-  guide.style.fontSize = item.length === 1 ? 'min(38vw,190px)' : 'min(30vw,150px)';
+  fitGuide(item.length === 1 ? item.toUpperCase() + item : item);
   $('traceSteps').innerHTML = tr.items.map((_, i) =>
     `<i class="${i === tr.idx ? 'on' : (i < tr.idx ? 'done' : '')}"></i>`).join('');
   $('traceClear').innerHTML = '重来 Clear';
@@ -379,6 +381,28 @@ function traceItem() {
   setupCanvas();
   say(`Trace the letter ${item.split('').join(' ')}. ${item}!`, { rate: 0.75 });
 }
+/* Scale the guide text to the real box width so long words never clip.
+   Measured at a 100px reference size, then scaled — capped by box height. */
+function fitGuide(text) {
+  const guide = $('traceGuide');
+  guide.innerHTML = `<span>${text}</span>`;
+  const fit = () => {
+    const sp = guide.firstElementChild;
+    if (!sp) return;
+    sp.style.fontSize = '100px';
+    const box = guide.getBoundingClientRect();
+    const nat = sp.getBoundingClientRect();
+    if (!box.width || !nat.width) return;
+    const byWidth = 100 * (box.width * 0.88) / nat.width;
+    const byHeight = box.height * 0.66;
+    sp.style.fontSize = Math.max(22, Math.min(byWidth, byHeight)) + 'px';
+  };
+  fit();
+  // the webfont may land after first paint — re-fit once it does
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit).catch(() => {});
+  tr.refit = fit;
+}
+
 function setupCanvas() {
   const cv = $('traceCanvas');
   const r = cv.getBoundingClientRect();
